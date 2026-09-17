@@ -9,24 +9,25 @@ const LandingPage = () => {
 
             <main className="flex-1">
                 {/* Hero Section */}
-                <section className="relative overflow-hidden py-20 lg:py-32">
+                <section className="relative overflow-hidden py-12 sm:py-20 lg:py-32">
                     <div className="absolute inset-0 -z-10 bg-[radial-gradient(45%_45%_at_50%_50%,rgba(72,31,78,0.12)_0%,rgba(250,247,244,0)_100%)]"></div>
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-                        <div className="inline-flex items-center gap-2 rounded-full bg-secondary/15 px-4 py-1.5 text-sm font-bold text-primary ring-1 ring-inset ring-secondary/30 mb-8">
+                        <div className="inline-flex items-center gap-2 rounded-full bg-secondary/15 px-3.5 py-1 text-xs sm:text-sm font-bold text-primary ring-1 ring-inset ring-secondary/30 mb-6 sm:mb-8">
                             <span className="inline-block size-2 rounded-full bg-secondary"></span>
+                            <span>Fiqh Files Knowledge Platform</span>
                         </div>
-                        <h1 className="mx-auto max-w-5xl text-6xl sm:text-7xl md:text-8xl lg:text-[5.75rem] font-black tracking-tight text-slate-900 font-fn-kanaka-semibold flex flex-col items-center leading-[0.9] sm:leading-[0.92] gap-1 sm:gap-2">
+                        <h1 className="mx-auto max-w-5xl text-4xl sm:text-6xl md:text-8xl lg:text-[5.75rem] font-black tracking-tight text-slate-900 font-fn-kanaka-semibold flex flex-col items-center leading-[1.05] sm:leading-[0.92] gap-1 sm:gap-2">
                             <span className="block">മനസ്സിലൊരു</span>
                             <span className="block text-secondary">ചോദ്യമുണ്ടോ?</span>
                         </h1>
-                        <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-600 font-rahna22">
+                        <p className="mx-auto mt-4 sm:mt-6 max-w-2xl text-base sm:text-lg leading-relaxed text-slate-600 font-rahna22 px-2">
                             നിത്യജീവിതത്തിലെ കർമശാസ്ത്രപരമായ സംശയങ്ങൾക്ക് കൃത്യവും ലളിതവുമായ മറുപടികൾ. സമസ്ത ഗ്രാഫ് 'ഫിഖ്ഹ് ഫയൽസി'ലൂടെ നിങ്ങളുടെ സംശയങ്ങൾ ചോദിച്ചറിയാം.
                         </p>
-                        <div className="mt-10 flex items-center justify-center gap-x-6">
-                            <Link className="rounded-xl bg-primary px-8 py-4 text-base font-bold text-white shadow-xl shadow-primary/25 hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all hover:scale-105 active:scale-95" to="/ask">
+                        <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-x-6 w-full max-w-xs sm:max-w-none mx-auto">
+                            <Link className="w-full sm:w-auto rounded-xl bg-primary px-8 py-3.5 sm:py-4 text-sm sm:text-base font-bold text-white shadow-xl shadow-primary/25 hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all hover:scale-105 active:scale-95 text-center" to="/ask">
                                 Ask a Question
                             </Link>
-                            <a className="text-sm font-bold leading-6 text-primary hover:text-secondary transition-colors" href="#feed">
+                            <a className="text-sm font-bold leading-6 text-primary hover:text-secondary transition-colors py-2" href="#feed">
                                 Browse Latest Fatwas <span aria-hidden="true">→</span>
                             </a>
                         </div>

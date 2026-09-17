@@ -84,8 +84,32 @@ const QAFeed = ({ limit }) => {
                         )}
                     </div>
 
-                    {/* Madhhab Filter Pills */}
-                    <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+                    {/* Mobile Madhhab Filter Dropdown */}
+                    <div className="block md:hidden">
+                        <label htmlFor="madhhab-filter-mobile" className="flex items-center gap-1.5 text-xs font-bold uppercase text-slate-500 mb-2">
+                            <FiFilter /> Filter by Madhhab:
+                        </label>
+                        <div className="relative">
+                            <select
+                                id="madhhab-filter-mobile"
+                                value={selectedMadhhab}
+                                onChange={(e) => setSelectedMadhhab(e.target.value)}
+                                className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 py-3.5 pl-4 pr-10 text-sm font-bold text-slate-900 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm cursor-pointer"
+                            >
+                                {MADHHABS.map((m) => (
+                                    <option key={m} value={m}>
+                                        {m} ({countsByMadhhab[m] || 0})
+                                    </option>
+                                ))}
+                            </select>
+                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
+                                <span className="material-symbols-outlined text-xl">expand_more</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Desktop Madhhab Filter Pills */}
+                    <div className="hidden md:flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
                         <div className="flex items-center gap-1.5 text-xs font-bold uppercase text-slate-400 mr-1 shrink-0">
                             <FiFilter /> Filter:
                         </div>
