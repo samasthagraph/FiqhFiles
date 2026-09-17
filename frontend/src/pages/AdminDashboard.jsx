@@ -140,7 +140,7 @@ const AdminDashboard = () => {
     const SidebarLink = ({ id, icon, label }) => (
         <button
             onClick={() => { setActiveTab(id); setIsSidebarOpen(false); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === id ? 'bg-primary/10 text-primary' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === id ? 'bg-primary/10 text-primary' : 'text-slate-600 hover:bg-slate-100'}`}
         >
             <span className="material-symbols-outlined">{icon}</span>
             <span className="font-medium">{label}</span>
@@ -149,9 +149,9 @@ const AdminDashboard = () => {
 
     if (selectedQuestion) {
         return (
-            <div className="font-display bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+            <div className="font-display bg-background-light text-slate-900 min-h-screen">
                 <div className="relative flex h-auto min-h-screen w-full flex-col">
-                    <header className="flex items-center justify-between border-b border-primary/10 bg-white dark:bg-background-dark px-4 md:px-20 py-3 sticky top-0 z-50">
+                    <header className="flex items-center justify-between border-b border-primary/10 bg-white px-4 md:px-20 py-3 sticky top-0 z-50">
                         <div className="flex items-center gap-3">
                             <img src="/logo.png" alt="Fiqh File" className="h-8 w-auto object-contain" />
                             <h2 className="text-base md:text-lg font-black text-primary">Fiqh Files Admin Panel</h2>
@@ -161,7 +161,7 @@ const AdminDashboard = () => {
                     <main className="flex-1 flex justify-center py-6 md:py-8 px-4">
                         <div className="max-w-[800px] flex-1 space-y-8">
                             <h1 className="text-2xl md:text-3xl font-extrabold">Finalizing Response</h1>
-                            <div className="rounded-xl border border-primary/10 bg-white dark:bg-slate-800/50 p-4 md:p-6 shadow-sm overflow-hidden">
+                            <div className="rounded-xl border border-primary/10 bg-white p-4 md:p-6 shadow-sm overflow-hidden">
                                 <h2 className="text-lg md:text-xl font-bold mb-4">The Question</h2>
                                 <p className="italic border-l-4 border-primary pl-4 md:text-lg break-words leading-relaxed font-rahna22">"{selectedQuestion.questionText}"</p>
                             </div>
@@ -195,9 +195,9 @@ const AdminDashboard = () => {
     }
 
     return (
-        <div className="flex h-screen overflow-hidden bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+        <div className="flex h-screen overflow-hidden bg-background-light text-slate-900 font-display">
             {/* Sidebar Desktop */}
-            <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 md:static transition-transform duration-300 flex flex-col`}>
+            <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 md:static transition-transform duration-300 flex flex-col`}>
                 <div className="p-6 flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
                         <img src="/logo.png" alt="Fiqh File Logo" className="h-9 w-auto object-contain" />
@@ -212,8 +212,8 @@ const AdminDashboard = () => {
                     <SidebarLink id="scholars" icon="person" label="Scholars" />
                     <SidebarLink id="settings" icon="settings" label="Settings" />
                 </nav>
-                <div className="p-4 border-t border-slate-200 dark:border-slate-800">
-                    <div className="flex items-center gap-3 p-2 bg-slate-50 dark:bg-slate-800 rounded-xl">
+                <div className="p-4 border-t border-slate-200">
+                    <div className="flex items-center gap-3 p-2 bg-slate-50 rounded-xl">
                         <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center">
                             <span className="material-symbols-outlined text-primary">account_circle</span>
                         </div>
@@ -230,13 +230,13 @@ const AdminDashboard = () => {
 
             {/* Main Content */}
             <main className="flex-1 overflow-y-auto flex flex-col">
-                <header className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between px-4 md:px-8 sticky top-0 z-10 shadow-sm">
+                <header className="h-16 border-b border-slate-200 bg-white flex items-center justify-between px-4 md:px-8 sticky top-0 z-10 shadow-sm">
                     <div className="flex items-center gap-4 flex-1">
                         <button className="md:hidden p-2 text-slate-500 hover:text-primary" onClick={() => setIsSidebarOpen(true)}><FiMenu size={24} /></button>
                         <div className="relative w-full max-w-md hidden md:block">
                             <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
                             <input
-                                className="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-lg py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary outline-none"
+                                className="w-full bg-slate-100 border-none rounded-lg py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary outline-none"
                                 placeholder="Search queries..."
                                 type="text"
                                 value={searchTerm}

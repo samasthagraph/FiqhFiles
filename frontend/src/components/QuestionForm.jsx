@@ -24,36 +24,36 @@ const QuestionForm = () => {
     };
 
     return (
-        <section className="py-20 bg-white dark:bg-slate-900/50" id="ask">
+        <section className="py-20 bg-white" id="ask">
             <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Submit Your Question</h2>
-                    <p className="mt-4 text-slate-600 dark:text-slate-400">Your privacy is our priority. Personal details are never published.</p>
+                    <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-slate-900">Submit Your Question</h2>
+                    <p className="mt-4 text-slate-600">Your privacy is our priority. Personal details are never published.</p>
                 </div>
 
                 {isSuccess ? (
-                    <div className="bg-background-light dark:bg-background-dark p-8 rounded-2xl border border-primary/10 shadow-xl shadow-primary/5 text-center">
+                    <div className="bg-background-light p-8 rounded-2xl border border-primary/10 shadow-xl shadow-primary/5 text-center">
                         <span className="material-symbols-outlined text-6xl text-green-500 mb-4">check_circle</span>
-                        <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">Jazakallah Khair!</h3>
-                        <p className="text-slate-600 dark:text-slate-400">Your inquiry has been submitted successfully.</p>
+                        <h3 className="text-2xl font-bold text-slate-900 mb-2">Jazakallah Khair!</h3>
+                        <p className="text-slate-600">Your inquiry has been submitted successfully.</p>
                         <button
                             onClick={() => setIsSuccess(false)}
-                            className="mt-6 px-6 py-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg font-bold transition-all"
+                            className="mt-6 px-6 py-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg font-bold transition-all cursor-pointer"
                         >
                             Submit Another Inquiry
                         </button>
                     </div>
                 ) : (
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 bg-white dark:bg-slate-900 p-8 sm:p-10 rounded-3xl border border-primary/10 shadow-xl shadow-primary/5">
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 bg-white p-8 sm:p-10 rounded-3xl border border-primary/10 shadow-xl shadow-primary/5">
                         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                             <div>
-                                <label className="block text-sm font-bold text-slate-800 dark:text-slate-200 mb-2" htmlFor="name">
+                                <label className="block text-sm font-bold text-slate-800 mb-2" htmlFor="name">
                                     Full Name
                                 </label>
                                 <div>
                                     <input
                                         {...register("name", { required: "Name is required" })}
-                                        className="block w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3.5 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50 dark:bg-slate-800/50 outline-none transition-all text-sm shadow-sm"
+                                        className="block w-full rounded-xl border border-slate-200 px-4 py-3.5 text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50 outline-none transition-all text-sm shadow-sm"
                                         id="name"
                                         placeholder="Abdullah Rahman"
                                         type="text"
@@ -62,7 +62,7 @@ const QuestionForm = () => {
                                 </div>
                             </div>
                             <div>
-                                <label className="block text-sm font-bold text-slate-800 dark:text-slate-200 mb-2" htmlFor="phone">
+                                <label className="block text-sm font-bold text-slate-800 mb-2" htmlFor="phone">
                                     Phone Number
                                 </label>
                                 <div>
@@ -71,7 +71,7 @@ const QuestionForm = () => {
                                             required: "Phone number is required",
                                             pattern: { value: /^[0-9+\-\s()]+$/, message: "Invalid phone number" }
                                         })}
-                                        className="block w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3.5 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50 dark:bg-slate-800/50 outline-none transition-all text-sm shadow-sm"
+                                        className="block w-full rounded-xl border border-slate-200 px-4 py-3.5 text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50 outline-none transition-all text-sm shadow-sm"
                                         id="phone"
                                         placeholder="+1 (555) 000-0000"
                                         type="tel"
@@ -82,13 +82,13 @@ const QuestionForm = () => {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-bold text-slate-800 dark:text-slate-200 mb-2" htmlFor="madhhab">
+                            <label className="block text-sm font-bold text-slate-800 mb-2" htmlFor="madhhab">
                                 School of Thought (Madhhab)
                             </label>
                             <div>
                                 <select
                                     {...register("madhhab", { required: "Please select a Madhhab" })}
-                                    className="block w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3.5 text-slate-900 dark:text-slate-100 focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50 dark:bg-slate-800/50 outline-none transition-all text-sm shadow-sm cursor-pointer"
+                                    className="block w-full rounded-xl border border-slate-200 px-4 py-3.5 text-slate-900 focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50 outline-none transition-all text-sm shadow-sm cursor-pointer"
                                     id="madhhab"
                                 >
                                     <option value="">Select your Madhhab</option>
@@ -103,13 +103,13 @@ const QuestionForm = () => {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-bold text-slate-800 dark:text-slate-200 mb-2" htmlFor="questionText">
+                            <label className="block text-sm font-bold text-slate-800 mb-2" htmlFor="questionText">
                                 Your Question
                             </label>
                             <div>
                                 <textarea
                                     {...register("questionText", { required: "Question is required", minLength: { value: 20, message: "Please provide more details" } })}
-                                    className="block w-full rounded-xl border border-slate-200 dark:border-slate-700 p-4 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50/50 dark:bg-slate-800/50 outline-none transition-all text-sm shadow-sm leading-relaxed resize-y font-rahna22"
+                                    className="block w-full rounded-xl border border-slate-200 p-4 text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 bg-slate-50 outline-none transition-all text-sm shadow-sm leading-relaxed resize-y font-rahna22"
                                     id="questionText"
                                     placeholder="Type your detailed inquiry here..."
                                     rows="4"

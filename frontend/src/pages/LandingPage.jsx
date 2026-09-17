@@ -19,7 +19,7 @@ const LandingPage = () => {
                             <span className="block">മനസ്സിലൊരു</span>
                             <span className="block text-secondary">ചോദ്യമുണ്ടോ?</span>
                         </h1>
-                        <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-600 dark:text-slate-400 font-rahna22">
+                        <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-600 font-rahna22">
                             നിത്യജീവിതത്തിലെ കർമശാസ്ത്രപരമായ സംശയങ്ങൾക്ക് കൃത്യവും ലളിതവുമായ മറുപടികൾ. സമസ്ത ഗ്രാഫ് 'ഫിഖ്ഹ് ഫയൽസി'ലൂടെ നിങ്ങളുടെ സംശയങ്ങൾ ചോദിച്ചറിയാം.
                         </p>
                         <div className="mt-10 flex items-center justify-center gap-x-6">

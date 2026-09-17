@@ -114,7 +114,7 @@ const FatwaDetail = () => {
                                         The Answer
                                     </h2>
                                 </div>
-                                <div className="text-xl sm:text-2xl md:text-[1.65rem] text-slate-800 dark:text-slate-200 leading-relaxed sm:leading-loose whitespace-pre-wrap break-words font-rahna22 font-medium">
+                                <div className="text-xl sm:text-2xl md:text-[1.65rem] text-slate-800 leading-relaxed sm:leading-loose whitespace-pre-wrap break-words font-rahna22 font-medium">
                                     {fatwa.answerText}
                                 </div>
                             </div>
@@ -126,8 +126,8 @@ const FatwaDetail = () => {
                         <h3 className="text-2xl font-bold text-slate-900 mb-8">Discussion ({fatwa.comments?.length || 0})</h3>
 
                         {/* Add Comment Form */}
-                        <form onSubmit={handleSubmit(onCommentSubmit)} className="mb-10 bg-slate-50/70 dark:bg-slate-800/40 p-6 sm:p-8 rounded-2xl border border-primary/10">
-                            <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-4">Leave a comment</h4>
+                        <form onSubmit={handleSubmit(onCommentSubmit)} className="mb-10 bg-slate-50/70 p-6 sm:p-8 rounded-2xl border border-primary/10">
+                            <h4 className="font-bold text-slate-800 mb-4">Leave a comment</h4>
                             <div className="space-y-4">
                                 <div>
                                     <label className="sr-only">Name</label>
@@ -135,7 +135,7 @@ const FatwaDetail = () => {
                                         type="text"
                                         {...register('name', { required: 'Name is required' })}
                                         placeholder="Your Name"
-                                        className="block w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3.5 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white dark:bg-slate-900 transition-all text-sm outline-none shadow-sm"
+                                        className="block w-full rounded-xl border border-slate-200 px-4 py-3.5 text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white transition-all text-sm outline-none shadow-sm"
                                     />
                                     {errors.name && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.name.message}</p>}
                                 </div>
@@ -145,7 +145,7 @@ const FatwaDetail = () => {
                                         rows="3"
                                         {...register('text', { required: 'Comment cannot be empty' })}
                                         placeholder="Share your respectful thoughts or clarifications..."
-                                        className="block w-full rounded-xl border border-slate-200 dark:border-slate-700 p-4 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white dark:bg-slate-900 transition-all text-sm outline-none shadow-sm resize-y leading-relaxed font-rahna22"
+                                        className="block w-full rounded-xl border border-slate-200 p-4 text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white transition-all text-sm outline-none shadow-sm resize-y leading-relaxed font-rahna22"
                                     ></textarea>
                                     {errors.text && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.text.message}</p>}
                                 </div>

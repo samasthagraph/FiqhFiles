@@ -50,16 +50,16 @@ const QAFeed = ({ limit }) => {
     }, [questions, selectedMadhhab, searchTerm]);
 
     return (
-        <section className="py-12 sm:py-16 bg-white dark:bg-slate-900/50" id="feed">
+        <section className="py-12 sm:py-16 bg-white" id="feed">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 {/* Header & Filter Controls */}
                 <div className="flex flex-col gap-6 mb-10">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div>
-                            <h2 className="text-3xl font-black tracking-tight text-slate-900 dark:text-slate-100">
+                            <h2 className="text-3xl font-black tracking-tight text-slate-900">
                                 {limit ? 'Latest Answers' : 'Browse by School of Thought'}
                             </h2>
-                            <p className="mt-1 text-sm sm:text-base text-slate-600 dark:text-slate-400">
+                            <p className="mt-1 text-sm sm:text-base text-slate-600">
                                 Verified rulings and fatwas from qualified scholars.
                             </p>
                         </div>
@@ -73,7 +73,7 @@ const QAFeed = ({ limit }) => {
                                     placeholder="Search rulings..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full pl-10 pr-8 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-slate-900 dark:text-slate-100"
+                                    className="w-full pl-10 pr-8 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-slate-900"
                                 />
                                 {searchTerm && (
                                     <button onClick={() => setSearchTerm('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
@@ -99,11 +99,11 @@ const QAFeed = ({ limit }) => {
                                     className={`shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
                                         isSelected
                                             ? 'bg-primary text-white shadow-lg shadow-primary/25 scale-[1.02]'
-                                            : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-transparent'
+                                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-transparent'
                                     }`}
                                 >
                                     <span>{madhhab}</span>
-                                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${isSelected ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400'}`}>
+                                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${isSelected ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-600'}`}>
                                         {count}
                                     </span>
                                 </button>
@@ -118,10 +118,10 @@ const QAFeed = ({ limit }) => {
                         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
                     </div>
                 ) : filteredQuestions.length === 0 ? (
-                    <div className="text-center py-16 px-4 rounded-3xl border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/30">
-                        <span className="material-symbols-outlined text-5xl text-slate-300 dark:text-slate-600 mb-3">menu_book</span>
-                        <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200 mb-1">No fatwas found</h3>
-                        <p className="text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto mb-6">
+                    <div className="text-center py-16 px-4 rounded-3xl border border-dashed border-slate-300 bg-slate-50/50">
+                        <span className="material-symbols-outlined text-5xl text-slate-300 mb-3">menu_book</span>
+                        <h3 className="text-lg font-bold text-slate-800 mb-1">No fatwas found</h3>
+                        <p className="text-sm text-slate-500 max-w-md mx-auto mb-6">
                             {selectedMadhhab !== 'All' 
                                 ? `There are currently no published rulings under the ${selectedMadhhab} Madhhab matching your search.` 
                                 : 'No published rulings match your query.'}
@@ -129,7 +129,7 @@ const QAFeed = ({ limit }) => {
                         {(selectedMadhhab !== 'All' || searchTerm) && (
                             <button
                                 onClick={() => { setSelectedMadhhab('All'); setSearchTerm(''); }}
-                                className="px-5 py-2.5 rounded-xl bg-primary text-white text-sm font-bold shadow-md hover:bg-primary/90 transition-all"
+                                className="px-5 py-2.5 rounded-xl bg-primary text-white text-sm font-bold shadow-md hover:bg-primary/90 transition-all cursor-pointer"
                             >
                                 Show All Madhhabs
                             </button>
@@ -138,7 +138,7 @@ const QAFeed = ({ limit }) => {
                 ) : (
                     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                         {filteredQuestions.map((q) => (
-                            <div key={q._id} className="flex flex-col overflow-hidden rounded-2xl border border-primary/10 bg-white dark:bg-slate-900 transition-all hover:shadow-xl hover:-translate-y-1">
+                            <div key={q._id} className="flex flex-col overflow-hidden rounded-2xl border border-primary/10 bg-white transition-all hover:shadow-xl hover:-translate-y-1">
                                 <div className="p-6 flex flex-col h-full">
                                     <div className="flex items-center justify-between gap-x-2 mb-4">
                                         <span className="inline-flex items-center rounded-lg bg-secondary/15 px-2.5 py-1 text-xs font-black text-primary uppercase tracking-tight">
@@ -148,7 +148,7 @@ const QAFeed = ({ limit }) => {
                                             {new Date(q.createdAt).toLocaleDateString()}
                                         </span>
                                     </div>
-                                    <h3 className="text-lg sm:text-xl font-bold mb-3 line-clamp-3 break-words font-rahna22 text-slate-900 dark:text-slate-100 leading-snug" title={q.questionText}>
+                                    <h3 className="text-lg sm:text-xl font-bold mb-3 line-clamp-3 break-words font-rahna22 text-slate-900 leading-snug" title={q.questionText}>
                                         {q.questionText}
                                     </h3>
                                     <div className="border-t border-primary/10 pt-4 mt-auto">
@@ -156,7 +156,7 @@ const QAFeed = ({ limit }) => {
                                             <span className="material-symbols-outlined text-primary text-base">verified_user</span>
                                             <span className="text-[10px] font-black uppercase tracking-wider text-primary">Official Ruling</span>
                                         </div>
-                                        <p className="text-sm sm:text-base leading-relaxed text-slate-600 dark:text-slate-300 line-clamp-3 break-words font-rahna22 mb-4">
+                                        <p className="text-sm sm:text-base leading-relaxed text-slate-600 line-clamp-3 break-words font-rahna22 mb-4">
                                             {q.answerText}
                                         </p>
                                         <Link to={`/fatwa/${q._id}`} className="inline-flex items-center gap-1 text-xs sm:text-sm font-bold text-primary hover:text-secondary transition-colors">
@@ -171,7 +171,7 @@ const QAFeed = ({ limit }) => {
 
                 {limit && filteredQuestions.length > 0 && (
                     <div className="mt-12 text-center">
-                        <Link to="/fatwas" className="inline-flex items-center justify-center rounded-xl border-2 border-primary/20 bg-white dark:bg-slate-800 px-8 py-3.5 text-sm font-bold text-primary dark:text-slate-100 hover:bg-primary hover:text-white shadow-sm transition-all hover:scale-105 active:scale-95">
+                        <Link to="/fatwas" className="inline-flex items-center justify-center rounded-xl border-2 border-primary/20 bg-white px-8 py-3.5 text-sm font-bold text-primary hover:bg-primary hover:text-white shadow-sm transition-all hover:scale-105 active:scale-95">
                             Browse All in Archive →
                         </Link>
                     </div>
