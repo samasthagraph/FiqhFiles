@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #481f4e;
+  --color-secondary: #c39565;
+  --color-accent: #c39565;
+  --color-gold: #c39565;
+  --color-plum: #481f4e;
+  --color-background-light: #faf7f4;
+  --color-background-dark: #190b1c;
+  --font-display: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  @apply bg-background-light text-slate-900 font-display;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+h1, h2, h3, h4, h5, h6, p, span, div, textarea, blockquote, q {
+  overflow-wrap: anywhere;
+}
+
+/* TypeScope CSS Integration */
+:root {
+  --font-fn-kanaka-semibold: "FN Kanaka Semibold", sans-serif;
+  --font-rahna22: "Rahna22", sans-serif;
+}
+
+.font-fn-kanaka-semibold {
+  font-family: var(--font-fn-kanaka-semibold);
+}
+
+.font-rahna22 {
+  font-family: var(--font-rahna22);
+}
