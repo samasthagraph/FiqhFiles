@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { FiSearch, FiFilter, FiX } from 'react-icons/fi';
+import { API_BASE_URL } from '../config';
 
 const MADHHABS = ["All", "Shafi'i", "Hanafi", "Maliki", "Hanbali", "General / No Preference"];
 
@@ -14,7 +15,7 @@ const QAFeed = ({ limit }) => {
     useEffect(() => {
         const fetchQuestions = async () => {
             try {
-                const url = limit ? `http://localhost:5001/api/questions/public?limit=${limit}` : 'http://localhost:5001/api/questions/public';
+                const url = limit ? `${API_BASE_URL}/questions/public?limit=${limit}` : `${API_BASE_URL}/questions/public`;
                 const response = await axios.get(url);
                 setQuestions(response.data);
             } catch (error) {

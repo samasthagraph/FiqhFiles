@@ -4,6 +4,7 @@ import axios from 'axios';
 import Header from '../components/Header';
 import { useForm } from 'react-hook-form';
 import { FaArrowLeft, FaUserCircle } from 'react-icons/fa';
+import { API_BASE_URL } from '../config';
 
 const FatwaDetail = () => {
     const { id } = useParams();
@@ -15,7 +16,7 @@ const FatwaDetail = () => {
 
     const fetchFatwa = async () => {
         try {
-            const response = await axios.get(`http://localhost:5001/api/questions/public/${id}`);
+            const response = await axios.get(`${API_BASE_URL}/questions/public/${id}`);
             setFatwa(response.data);
         } catch (error) {
             console.error("Error fetching fatwa details:", error);
@@ -31,7 +32,7 @@ const FatwaDetail = () => {
     const onCommentSubmit = async (data) => {
         setIsSubmitting(true);
         try {
-            await axios.post(`http://localhost:5001/api/questions/${id}/comments`, data);
+            await axios.post(`${API_BASE_URL}/questions/${id}/comments`, data);
             reset();
             fetchFatwa(); // Refresh comments
         } catch (error) {

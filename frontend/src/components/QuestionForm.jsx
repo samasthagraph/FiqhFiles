@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useForm as useHookForm } from 'react-hook-form';
+import { API_BASE_URL } from '../config';
 
 const QuestionForm = () => {
     const { register, handleSubmit, reset, formState: { errors } } = useHookForm();
@@ -10,7 +11,7 @@ const QuestionForm = () => {
     const onSubmit = async (data) => {
         setIsSubmitting(true);
         try {
-            await axios.post('http://localhost:5001/api/questions', data);
+            await axios.post(`${API_BASE_URL}/questions`, data);
             setIsSuccess(true);
             reset();
             setTimeout(() => setIsSuccess(false), 5000);

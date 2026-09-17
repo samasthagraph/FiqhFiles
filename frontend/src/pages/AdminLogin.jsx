@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { FaLock, FaUser } from 'react-icons/fa';
+import { API_BASE_URL } from '../config';
 
 const AdminLogin = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -14,7 +15,7 @@ const AdminLogin = () => {
         setIsLoading(true);
         setError('');
         try {
-            const response = await axios.post('http://localhost:5001/api/admin/login', data);
+            const response = await axios.post(`${API_BASE_URL}/admin/login`, data);
             if (response.data.success) {
                 localStorage.setItem('adminToken', response.data.token);
                 navigate('/admin');

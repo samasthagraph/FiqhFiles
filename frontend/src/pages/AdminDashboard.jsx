@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FiLogOut, FiTrash2, FiSearch, FiExternalLink, FiPlus, FiFilter, FiMessageSquare, FiMenu, FiX } from 'react-icons/fi';
+import { API_BASE_URL } from '../config';
 
 const AdminDashboard = () => {
     const [questions, setQuestions] = useState([]);
@@ -31,7 +32,7 @@ const AdminDashboard = () => {
 
     const fetchQuestions = async (token) => {
         try {
-            const response = await axios.get('http://localhost:5001/api/admin/questions', {
+            const response = await axios.get(`${API_BASE_URL}/admin/questions`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setQuestions(response.data);
@@ -56,7 +57,7 @@ const AdminDashboard = () => {
         setIsAnswering(true);
         try {
             const token = localStorage.getItem('adminToken');
-            await axios.put(`http://localhost:5001/api/admin/questions/${selectedQuestion._id}`,
+            await axios.put(`${API_BASE_URL}/admin/questions/${selectedQuestion._id}`,
                 { answerText },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -73,7 +74,7 @@ const AdminDashboard = () => {
     const toggleUrgency = async (id) => {
         try {
             const token = localStorage.getItem('adminToken');
-            const res = await axios.put(`http://localhost:5001/api/admin/questions/${id}/urgent`, {}, {
+            const res = await axios.put(`${API_BASE_URL}/admin/questions/${id}/urgent`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setQuestions(questions.map(q => q._id === id ? { ...q, isUrgent: res.data.isUrgent } : q));
@@ -86,7 +87,7 @@ const AdminDashboard = () => {
         if (!window.confirm('Delete this record?')) return;
         try {
             const token = localStorage.getItem('adminToken');
-            await axios.delete(`http://localhost:5001/api/admin/questions/${id}`, {
+            await axios.delete(`${API_BASE_URL}/admin/questions/${id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setQuestions(questions.filter(q => q._id !== id));
@@ -100,7 +101,7 @@ const AdminDashboard = () => {
         e.preventDefault();
         try {
             const token = localStorage.getItem('adminToken');
-            const res = await axios.post('http://localhost:5001/api/admin/questions', newQuestionData, {
+            const res = await axios.post(`${API_BASE_URL}/admin/questions`, newQuestionData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setQuestions([res.data, ...questions]);
