@@ -151,8 +151,11 @@ router.post('/questions/:id/comments', async (req, res) => {
 // Basic Auth Login
 router.post('/admin/login', (req, res) => {
     const { username, password } = req.body;
-    if (username === 'admin' && password === 'admin123') {
-        res.json({ success: true, token: 'fake-jwt-token' });
+    const adminUser = process.env.ADMIN_USERNAME || 'graphadmin';
+    const adminPass = process.env.ADMIN_PASSWORD || 'graph951';
+
+    if (username === adminUser && password === adminPass) {
+        res.json({ success: true, token: 'graph-admin-secure-token' });
     } else {
         res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
