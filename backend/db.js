@@ -15,73 +15,6 @@ const pool = mysql.createPool({
     }
 });
 
-const initialQuestions = [
-    {
-        name: "Ahmed Al-Mansoor",
-        phone: "+1 555-0192",
-        madhhab: "Shafi'i",
-        isUrgent: false,
-        questionText: "What is the ruling regarding combining prayers during severe rain or storm according to the Shafi'i school?",
-        answerText: "In the Shafi'i school, it is permissible to combine (Jam') Dhuhr with 'Asr at the time of Dhuhr (Taqdim), and Maghrib with 'Isha at the time of Maghrib (Taqdim) due to rain, snow, or hail that wets one's clothes, provided that the person intends to pray in congregation at a distant mosque and the rain is present at the start of both prayers and during the salam of the first.",
-        status: "Answered",
-        comments: [
-            {
-                name: "Zaid Khan",
-                text: "Barakallahu feek for the clear explanation on the conditions of Taqdim."
-            },
-            {
-                name: "Omar Farooq",
-                text: "Does this apply to praying at home? (Answer: No, it is specific to reaching the congregation at the masjid according to the standard mu'tamad view)."
-            }
-        ]
-    },
-    {
-        name: "Fatima Zahra",
-        phone: "+1 555-0143",
-        madhhab: "Hanafi",
-        isUrgent: false,
-        questionText: "How should missed fasts from previous years of Ramadan be made up in the Hanafi madhhab?",
-        answerText: "According to the Hanafi madhhab, missed fasts of Ramadan (Qada) must be made up day for day as soon as reasonably possible. There is no monetary expiation (Fidya) required simply for delaying Qada past the next Ramadan, though making them up promptly is strongly recommended.",
-        status: "Answered",
-        comments: [
-            {
-                name: "Maryam Siddiqui",
-                text: "Very helpful and straightforward ruling, thank you."
-            }
-        ]
-    },
-    {
-        name: "Bilal Tariq",
-        phone: "+1 555-0188",
-        madhhab: "Maliki",
-        isUrgent: false,
-        questionText: "What is the ruling on Sadl (praying with hands at the sides) versus Qabd in the Maliki school?",
-        answerText: "In the Maliki school, Sadl (leaving hands at the sides during standing in obligatory prayers) is the well-known position (Mashhur) based on the continuous practice of the people of Madinah ('Amal Ahl al-Madinah). However, placing the right hand over the left (Qabd) is also permissible and acknowledged in the school for voluntary prayers and accepted across schools.",
-        status: "Answered",
-        comments: []
-    },
-    {
-        name: "Yusuf Hassan",
-        phone: "+1 555-0129",
-        madhhab: "Hanbali",
-        isUrgent: true,
-        questionText: "Is it permissible to pay Zakat al-Fitr in monetary currency instead of grain according to the Hanbali school?",
-        answerText: "",
-        status: "Pending",
-        comments: []
-    },
-    {
-        name: "Khadija Noor",
-        phone: "+1 555-0176",
-        madhhab: "General / No Preference",
-        isUrgent: false,
-        questionText: "What are the core etiquettes of making Du'a during the last third of the night?",
-        answerText: "",
-        status: "Pending",
-        comments: []
-    }
-];
-
 async function initDb() {
     try {
         console.log('Verifying Aiven MySQL database connection...');
@@ -114,28 +47,6 @@ async function initDb() {
                 FOREIGN KEY (questionId) REFERENCES fatwa_questions(id) ON DELETE CASCADE
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
         `);
-
-        // Check if seeding is needed
-        const [rows] = await connection.query('SELECT COUNT(*) as count FROM fatwa_questions');
-        if (rows[0].count === 0) {
-            console.log('Seeding initial fatwas in MySQL database...');
-            for (const q of initialQuestions) {
-                const [result] = await connection.query(
-                    'INSERT INTO fatwa_questions (name, phone, madhhab, isUrgent, questionText, answerText, status) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                    [q.name, q.phone, q.madhhab, q.isUrgent, q.questionText, q.answerText || '', q.status]
-                );
-                const questionId = result.insertId;
-                if (q.comments && q.comments.length > 0) {
-                    for (const c of q.comments) {
-                        await connection.query(
-                            'INSERT INTO fatwa_comments (questionId, name, text) VALUES (?, ?, ?)',
-                            [questionId, c.name, c.text]
-                        );
-                    }
-                }
-            }
-            console.log('Initial fatwas seeded successfully in MySQL!');
-        }
 
         connection.release();
     } catch (err) {
