@@ -22,7 +22,7 @@ const FatwasPage = () => {
                     <div className="flex flex-col items-center justify-between gap-8 md:flex-row">
                         <div className="flex items-center gap-3">
                             <img src="/logo.png" alt="Fiqh File Logo" className="h-10 w-auto object-contain brightness-0 invert" />
-                            <h2 className="text-2xl font-black tracking-tight text-secondary">Fiqh File</h2>
+                            <h2 className="text-2xl font-black tracking-tight text-secondary"></h2>
                         </div>
                         <p className="text-sm text-slate-400 text-center">
                             © {new Date().getFullYear()} Fiqh File Knowledge Platform. All answers are provided by verified scholars.
