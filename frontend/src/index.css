@@ -10,8 +10,10 @@
   --color-background-light: #faf7f4;
   --color-background-dark: #faf7f4;
   --font-display: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-fn-kanaka-semibold: "FN Kanaka Semibold", sans-serif;
-  --font-rahna22: "Rahna22", sans-serif;
+  --font-fn-kanaka-semibold: "FN Kanaka Semibold", "Anek Malayalam", sans-serif;
+  --font-rahna22: "Anek Malayalam", "Almarai", "Rahna22", sans-serif;
+  --font-anek: "Anek Malayalam", sans-serif;
+  --font-almarai: "Almarai", sans-serif;
 }
 
 html, body {
@@ -29,6 +31,7 @@ html, body {
   --color-background-light: #faf7f4;
   --color-background-dark: #faf7f4;
   --font-display: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-malayalam: 'Anek Malayalam', 'Almarai', sans-serif;
 }
 
 body {
@@ -41,16 +44,18 @@ h1, h2, h3, h4, h5, h6, p, span, div, textarea, blockquote, q {
   overflow-wrap: anywhere;
 }
 
-/* TypeScope CSS Integration */
-:root {
-  --font-fn-kanaka-semibold: "FN Kanaka Semibold", sans-serif;
-  --font-rahna22: "Rahna22", sans-serif;
-}
-
 .font-fn-kanaka-semibold {
   font-family: var(--font-fn-kanaka-semibold);
 }
 
-.font-rahna22 {
-  font-family: var(--font-rahna22);
+.font-rahna22, .font-malayalam {
+  font-family: "Anek Malayalam", "Almarai", "Rahna22", sans-serif;
+}
+
+.font-anek {
+  font-family: "Anek Malayalam", sans-serif;
+}
+
+.font-almarai {
+  font-family: "Almarai", sans-serif;
 }
