@@ -183,7 +183,7 @@ const QAFeed = ({ limit }) => {
                                         <p className="text-sm sm:text-base leading-relaxed text-slate-600 line-clamp-3 break-words font-rahna22 mb-4">
                                             {q.answerText}
                                         </p>
-                                        <Link to={`/fatwa/${q._id}`} className="inline-flex items-center gap-1 text-xs sm:text-sm font-bold text-primary hover:text-secondary transition-colors">
+                                        <Link to={`/masala/${q._id}`} className="inline-flex items-center gap-1 text-xs sm:text-sm font-bold text-primary hover:text-secondary transition-colors">
                                             Read Full Mas'ala <span>→</span>
                                         </Link>
                                     </div>
@@ -195,7 +195,7 @@ const QAFeed = ({ limit }) => {
 
                 {limit && filteredQuestions.length > 0 && (
                     <div className="mt-12 text-center">
-                        <Link to="/fatwas" className="inline-flex items-center justify-center rounded-xl border-2 border-primary/20 bg-white px-8 py-3.5 text-sm font-bold text-primary hover:bg-primary hover:text-white shadow-sm transition-all hover:scale-105 active:scale-95">
+                        <Link to="/masalas" className="inline-flex items-center justify-center rounded-xl border-2 border-primary/20 bg-white px-8 py-3.5 text-sm font-bold text-primary hover:bg-primary hover:text-white shadow-sm transition-all hover:scale-105 active:scale-95">
                             Browse All in Archive →
                         </Link>
                     </div>

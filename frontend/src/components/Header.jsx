@@ -19,7 +19,7 @@ const Header = () => {
                     {/* Desktop Navigation */}
                     <nav className="hidden md:flex items-center gap-8">
                         <Link to="/" className="text-sm font-semibold leading-normal text-slate-900 hover:text-primary transition-colors">Home</Link>
-                        <Link to="/fatwas" className="text-sm font-semibold leading-normal text-slate-900 hover:text-primary transition-colors">Mas'ala</Link>
+                        <Link to="/masalas" className="text-sm font-semibold leading-normal text-slate-900 hover:text-primary transition-colors">Mas'ala</Link>
                         <Link to="/ask" className="flex items-center justify-center rounded-xl bg-primary px-5 py-2.5 text-sm font-bold leading-normal text-white shadow-lg shadow-primary/20 hover:scale-105 transition-all">
                             Ask a Question
                         </Link>
@@ -37,7 +37,7 @@ const Header = () => {
                 <div className="border-b border-primary/10 bg-white px-4 py-6 md:hidden shadow-xl animate-in fade-in slide-in-from-top-4 duration-300">
                     <div className="mx-auto max-w-7xl flex flex-col gap-4">
                         <Link to="/" className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2" onClick={() => setIsMenuOpen(false)}>Home</Link>
-                        <Link to="/fatwas" className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2" onClick={() => setIsMenuOpen(false)}>Mas'ala</Link>
+                        <Link to="/masalas" className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2" onClick={() => setIsMenuOpen(false)}>Mas'ala</Link>
                         <Link to="/ask" className="w-full text-center rounded-xl bg-primary px-5 py-3 text-lg font-bold text-white shadow-lg shadow-primary/20" onClick={() => setIsMenuOpen(false)}>
                             Ask a Question
                         </Link>

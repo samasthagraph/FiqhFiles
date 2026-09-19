@@ -61,7 +61,7 @@ const FatwaDetail = () => {
                 <div className="flex-grow flex flex-col justify-center items-center text-center p-4">
                     <h2 className="text-3xl font-bold text-secondary mb-2">Mas'ala Not Found</h2>
                     <p className="text-slate-500 mb-6">The ruling you are looking for does not exist or has not been answered yet.</p>
-                    <Link to="/fatwas" className="bg-primary text-white px-6 py-3 rounded-full font-medium hover:bg-primary/90 transition-colors">
+                    <Link to="/masalas" className="bg-primary text-white px-6 py-3 rounded-full font-medium hover:bg-primary/90 transition-colors">
                         Browse All Mas'alas
                     </Link>
                 </div>
@@ -77,7 +77,7 @@ const FatwaDetail = () => {
                 <div className="max-w-4xl mx-auto">
 
                     {/* Back Link */}
-                    <Link to="/fatwas" className="inline-flex items-center gap-2 text-slate-500 hover:text-primary transition-colors mb-8 font-medium">
+                    <Link to="/masalas" className="inline-flex items-center gap-2 text-slate-500 hover:text-primary transition-colors mb-8 font-medium">
                         <span className="material-symbols-outlined text-sm">arrow_back</span> Back to all Mas'alas
                     </Link>
 

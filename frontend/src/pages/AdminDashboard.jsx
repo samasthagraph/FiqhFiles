@@ -378,7 +378,7 @@ const AdminDashboard = () => {
                                                     </td>
                                                     <td className="px-6 md:px-8 py-4 md:py-5 text-right">
                                                         <div className="flex justify-end gap-2 md:gap-3 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
-                                                            <button onClick={() => navigate(`/fatwa/${q._id}`)} className="p-1.5 md:p-2 text-slate-400 hover:text-primary transition-colors bg-white border border-slate-100 rounded-lg shadow-sm"><FiExternalLink size={14} /></button>
+                                                            <button onClick={() => navigate(`/masala/${q._id}`)} className="p-1.5 md:p-2 text-slate-400 hover:text-primary transition-colors bg-white border border-slate-100 rounded-lg shadow-sm"><FiExternalLink size={14} /></button>
                                                             <button onClick={() => { setSelectedQuestion(q); setAnswerText(q.answerText || ''); }} className="bg-slate-900 text-white text-[9px] md:text-[10px] px-3 md:px-4 py-1.5 md:py-2 rounded-lg font-black uppercase tracking-widest hover:bg-primary transition-all shadow-md">Manage</button>
                                                             <button onClick={() => handleDelete(q._id)} className="p-1.5 md:p-2 text-slate-300 hover:text-red-500 transition-colors bg-white border border-slate-100 rounded-lg shadow-sm"><FiTrash2 size={14} /></button>
                                                         </div>
@@ -418,7 +418,7 @@ const AdminDashboard = () => {
                                                 <p className="text-sm md:text-base text-slate-600 mb-4 leading-relaxed font-rahna22">"{comment.text}"</p>
                                                 <div className="bg-slate-50 p-3 md:p-4 rounded-xl md:rounded-2xl border border-slate-100 flex items-center justify-between">
                                                     <p className="text-[10px] md:text-[11px] font-bold text-slate-500 truncate pr-4 font-rahna22">Topic: {comment.questionText}</p>
-                                                    <button onClick={() => navigate(`/fatwa/${comment.questionId}`)} className="text-[10px] font-black text-primary hover:underline shrink-0">VIEW</button>
+                                                    <button onClick={() => navigate(`/masala/${comment.questionId}`)} className="text-[10px] font-black text-primary hover:underline shrink-0">VIEW</button>
                                                 </div>
                                             </div>
                                         </div>

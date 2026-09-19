@@ -16,6 +16,7 @@ function App() {
           <Route path="/fatwas" element={<FatwasPage />} />
           <Route path="/fatwa/:id" element={<FatwaDetail />} />
           <Route path="/masalas" element={<FatwasPage />} />
+          <Route path="/masala" element={<FatwasPage />} />
           <Route path="/masala/:id" element={<FatwaDetail />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/login" element={<AdminLogin />} />
