@@ -171,7 +171,7 @@ const AdminDashboard = () => {
                                     className="w-full h-80 p-4 md:p-6 rounded-xl border border-primary/10 bg-white outline-none focus:ring-2 focus:ring-primary/20 text-base md:text-lg leading-relaxed shadow-inner break-words resize-y font-rahna22"
                                     value={answerText}
                                     onChange={(e) => setAnswerText(e.target.value)}
-                                    placeholder="Begin writing the formal fatwa..."
+                                    placeholder="Begin writing the formal mas'ala response..."
                                 />
                                 <div className="flex flex-col md:flex-row justify-between items-center gap-4 pt-4">
                                     <button onClick={() => toggleUrgency(selectedQuestion._id)} className={`flex items-center gap-2 text-sm font-bold ${selectedQuestion.isUrgent ? 'text-red-500' : 'text-slate-400'}`}>
@@ -183,7 +183,7 @@ const AdminDashboard = () => {
                                         disabled={isAnswering || !answerText.trim()}
                                         className="w-full md:w-auto bg-primary text-white px-10 py-4 rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 disabled:opacity-50 transition-all"
                                     >
-                                        {isAnswering ? 'Publishing...' : 'Publish Official Fatwa'}
+                                        {isAnswering ? 'Publishing...' : 'Publish Official Mas\'ala'}
                                     </button>
                                 </div>
                             </div>
@@ -338,7 +338,7 @@ const AdminDashboard = () => {
                             <div className="mb-6 md:mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                 <div>
                                     <h1 className="text-2xl md:text-3xl font-black">Questions</h1>
-                                    <p className="text-slate-500 text-sm">Reviewing fatwa requests.</p>
+                                    <p className="text-slate-500 text-sm">Reviewing mas'ala requests.</p>
                                 </div>
                                 <button onClick={() => setShowNewModal(true)} className="flex items-center justify-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-bold text-sm shadow-xl shadow-primary/20 hover:scale-105 transition-all outline-none"><FiPlus /> New Record</button>
                             </div>
@@ -397,7 +397,7 @@ const AdminDashboard = () => {
                         <div className="animate-in fade-in duration-500">
                             <div className="mb-8">
                                 <h1 className="text-2xl md:text-3xl font-black">Community Comments</h1>
-                                <p className="text-slate-500 text-sm">Feedback on your fatwa responses.</p>
+                                <p className="text-slate-500 text-sm">Feedback on your mas'ala responses.</p>
                             </div>
 
                             <div className="space-y-4 md:space-y-6">

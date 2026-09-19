@@ -8,7 +8,7 @@ const FatwasPage = () => {
 
             <main className="flex-1">
                 <div className="py-12 text-center px-4">
-                    <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4">All Fatwas Archive</h1>
+                    <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4">All Mas'alas Archive</h1>
                     <p className="max-w-2xl mx-auto text-lg text-slate-600">
                         Browse the complete collection of authentic Islamic rulings.
                     </p>

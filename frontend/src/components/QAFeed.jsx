@@ -60,7 +60,7 @@ const QAFeed = ({ limit }) => {
                                 {limit ? 'Latest Answers' : 'Browse by School of Thought'}
                             </h2>
                             <p className="mt-1 text-sm sm:text-base text-slate-600">
-                                Verified rulings and fatwas from qualified scholars.
+                                Verified rulings and mas'alas from qualified scholars.
                             </p>
                         </div>
 
@@ -144,7 +144,7 @@ const QAFeed = ({ limit }) => {
                 ) : filteredQuestions.length === 0 ? (
                     <div className="text-center py-16 px-4 rounded-3xl border border-dashed border-slate-300 bg-slate-50/50">
                         <span className="material-symbols-outlined text-5xl text-slate-300 mb-3">menu_book</span>
-                        <h3 className="text-lg font-bold text-slate-800 mb-1">No fatwas found</h3>
+                        <h3 className="text-lg font-bold text-slate-800 mb-1">No mas'alas found</h3>
                         <p className="text-sm text-slate-500 max-w-md mx-auto mb-6">
                             {selectedMadhhab !== 'All' 
                                 ? `There are currently no published rulings under the ${selectedMadhhab} Madhhab matching your search.` 
@@ -184,7 +184,7 @@ const QAFeed = ({ limit }) => {
                                             {q.answerText}
                                         </p>
                                         <Link to={`/fatwa/${q._id}`} className="inline-flex items-center gap-1 text-xs sm:text-sm font-bold text-primary hover:text-secondary transition-colors">
-                                            Read Full Fatwa <span>→</span>
+                                            Read Full Mas'ala <span>→</span>
                                         </Link>
                                     </div>
                                 </div>

@@ -28,7 +28,7 @@ const LandingPage = () => {
                                 Ask a Question
                             </Link>
                             <a className="text-sm font-bold leading-6 text-primary hover:text-secondary transition-colors py-2" href="#feed">
-                                Browse Latest Fatwas <span aria-hidden="true">→</span>
+                                Browse Latest Mas'alas <span aria-hidden="true">→</span>
                             </a>
                         </div>
                     </div>

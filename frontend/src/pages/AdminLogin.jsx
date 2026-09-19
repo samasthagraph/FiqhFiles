@@ -38,7 +38,7 @@ const AdminLogin = () => {
                 <h2 className="text-center text-3xl font-extrabold text-primary tracking-tight">
                 </h2>
                 <p className="mt-2 text-center text-sm text-slate-500">
-                    Sign in to manage fatwas and religious inquiries
+                    Sign in to manage mas'alas and religious inquiries
                 </p>
             </div>
 
