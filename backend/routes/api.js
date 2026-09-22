@@ -2,6 +2,27 @@ const express = require('express');
 const router = express.Router();
 const { pool } = require('../db');
 
+// In-Memory Fast Cache with TTL
+const cache = new Map();
+
+function getCached(key) {
+    const item = cache.get(key);
+    if (!item) return null;
+    if (Date.now() > item.expiresAt) {
+        cache.delete(key);
+        return null;
+    }
+    return item.data;
+}
+
+function setCached(key, data, ttlMs = 120000) { // 2 minutes default TTL
+    cache.set(key, { data, expiresAt: Date.now() + ttlMs });
+}
+
+function clearPublicCache() {
+    cache.clear();
+}
+
 // Helper to format a question record with _id and comments
 function formatQuestion(q, comments = []) {
     return {
@@ -48,16 +69,26 @@ router.post('/questions', async (req, res) => {
     }
 });
 
-// Get public answered questions
+// Get public answered questions (High Performance with Cache)
 router.get('/questions/public', async (req, res) => {
     try {
         const limit = parseInt(req.query.limit) || 0;
+        const madhhab = req.query.madhhab || 'All';
+        const cacheKey = `public_questions_${limit}_${madhhab}`;
+
+        const cached = getCached(cacheKey);
+        if (cached) {
+            res.set('Cache-Control', 'public, max-age=30, stale-while-revalidate=60');
+            res.set('X-Cache', 'HIT');
+            return res.json(cached);
+        }
+
         let query = "SELECT * FROM fatwa_questions WHERE status = 'Answered'";
         const params = [];
 
-        if (req.query.madhhab && req.query.madhhab !== 'All') {
+        if (madhhab !== 'All') {
             query += ' AND madhhab = ?';
-            params.push(req.query.madhhab);
+            params.push(madhhab);
         }
 
         query += ' ORDER BY createdAt DESC';
@@ -69,7 +100,7 @@ router.get('/questions/public', async (req, res) => {
 
         const [questions] = await pool.query(query, params);
 
-        // Fetch comments for all these questions
+        // Fetch comments for all returned questions efficiently
         const questionIds = questions.map(q => q.id);
         let comments = [];
         if (questionIds.length > 0) {
@@ -85,6 +116,10 @@ router.get('/questions/public', async (req, res) => {
             return formatQuestion(q, qComments);
         });
 
+        setCached(cacheKey, formatted, 120000); // 2 minutes
+
+        res.set('Cache-Control', 'public, max-age=30, stale-while-revalidate=60');
+        res.set('X-Cache', 'MISS');
         res.json(formatted);
     } catch (error) {
         console.error('Error fetching public questions:', error);
@@ -92,9 +127,17 @@ router.get('/questions/public', async (req, res) => {
     }
 });
 
-// Get a single public answered question by ID
+// Get a single public answered question by ID (High Performance with Cache)
 router.get('/questions/public/:id', async (req, res) => {
     try {
+        const cacheKey = `public_question_${req.params.id}`;
+        const cached = getCached(cacheKey);
+        if (cached) {
+            res.set('Cache-Control', 'public, max-age=30, stale-while-revalidate=60');
+            res.set('X-Cache', 'HIT');
+            return res.json(cached);
+        }
+
         const [questions] = await pool.query(
             "SELECT * FROM fatwa_questions WHERE id = ? AND status = 'Answered'",
             [req.params.id]
@@ -110,7 +153,12 @@ router.get('/questions/public/:id', async (req, res) => {
             [req.params.id]
         );
 
-        res.json(formatQuestion(question, comments));
+        const formatted = formatQuestion(question, comments);
+        setCached(cacheKey, formatted, 120000);
+
+        res.set('Cache-Control', 'public, max-age=30, stale-while-revalidate=60');
+        res.set('X-Cache', 'MISS');
+        res.json(formatted);
     } catch (error) {
         console.error('Error fetching question detail:', error);
         res.status(500).json({ error: 'Server error' });
@@ -139,6 +187,7 @@ router.post('/questions/:id/comments', async (req, res) => {
             [req.params.id, name, text]
         );
 
+        clearPublicCache();
         res.status(201).json({ message: 'Comment submitted successfully' });
     } catch (error) {
         console.error('Error adding comment:', error);
@@ -213,6 +262,7 @@ router.put('/admin/questions/:id', authCheck, async (req, res) => {
         }
 
         const [comments] = await pool.query('SELECT * FROM fatwa_comments WHERE questionId = ?', [req.params.id]);
+        clearPublicCache();
         res.json(formatQuestion(questions[0], comments));
     } catch (error) {
         console.error('Error answering question:', error);
@@ -234,6 +284,7 @@ router.put('/admin/questions/:id/urgent', authCheck, async (req, res) => {
         }
 
         const [comments] = await pool.query('SELECT * FROM fatwa_comments WHERE questionId = ?', [req.params.id]);
+        clearPublicCache();
         res.json(formatQuestion(questions[0], comments));
     } catch (error) {
         console.error('Error toggling urgency:', error);
@@ -253,6 +304,7 @@ router.post('/admin/questions', authCheck, async (req, res) => {
         );
 
         const [questions] = await pool.query('SELECT * FROM fatwa_questions WHERE id = ?', [result.insertId]);
+        clearPublicCache();
         res.status(201).json(formatQuestion(questions[0], []));
     } catch (error) {
         console.error('Error creating admin question:', error);
@@ -270,6 +322,7 @@ router.delete('/admin/questions/:id', authCheck, async (req, res) => {
             return res.status(404).json({ error: 'Question not found' });
         }
 
+        clearPublicCache();
         res.json({ message: 'Question deleted successfully' });
     } catch (error) {
         console.error('Error deleting question:', error);

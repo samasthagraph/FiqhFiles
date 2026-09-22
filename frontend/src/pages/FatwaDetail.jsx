@@ -1,33 +1,37 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import Header from '../components/Header';
 import { useForm } from 'react-hook-form';
 import { FaArrowLeft, FaUserCircle } from 'react-icons/fa';
 import { API_BASE_URL } from '../config';
+import { clientCache } from '../utils/clientCache';
 
 const FatwaDetail = () => {
     const { id } = useParams();
-    const [fatwa, setFatwa] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const cachedItem = clientCache.get(`masala_detail_${id}`) || clientCache.findQuestion(id);
+
+    const [fatwa, setFatwa] = useState(cachedItem || null);
+    const [isLoading, setIsLoading] = useState(!cachedItem);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
-    const fetchFatwa = async () => {
+    const fetchFatwa = useCallback(async () => {
         try {
             const response = await axios.get(`${API_BASE_URL}/questions/public/${id}`);
             setFatwa(response.data);
+            clientCache.set(`masala_detail_${id}`, response.data);
         } catch (error) {
             console.error("Error fetching fatwa details:", error);
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [id]);
 
     useEffect(() => {
         fetchFatwa();
-    }, [id]);
+    }, [fetchFatwa]);
 
     const onCommentSubmit = async (data) => {
         setIsSubmitting(true);

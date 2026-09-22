@@ -1,3 +1,4 @@
+const compression = require('compression');
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
@@ -8,8 +9,13 @@ const { initDb } = require('./db');
 const app = express();
 
 // Middleware
+app.use(compression());
 app.use(cors());
 app.use(express.json());
+
+// Health check endpoint for uptime monitoring & keep-alive
+app.get('/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
+app.get('/api/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
 
 // Routes
 app.use('/api', apiRoutes);

@@ -3,29 +3,40 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { FiSearch, FiFilter, FiX } from 'react-icons/fi';
 import { API_BASE_URL } from '../config';
+import { clientCache } from '../utils/clientCache';
 
 const MADHHABS = ["All", "Shafi'i", "Hanafi", "Maliki", "Hanbali", "General / No Preference"];
 
 const QAFeed = ({ limit }) => {
-    const [questions, setQuestions] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const cacheKey = `qa_feed_${limit || 'all'}`;
+    const cached = clientCache.get(cacheKey);
+
+    const [questions, setQuestions] = useState(cached || []);
+    const [isLoading, setIsLoading] = useState(!cached || cached.length === 0);
     const [selectedMadhhab, setSelectedMadhhab] = useState('All');
     const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
+        let isMounted = true;
         const fetchQuestions = async () => {
             try {
                 const url = limit ? `${API_BASE_URL}/questions/public?limit=${limit}` : `${API_BASE_URL}/questions/public`;
                 const response = await axios.get(url);
-                setQuestions(response.data);
+                if (isMounted) {
+                    setQuestions(response.data);
+                    clientCache.set(cacheKey, response.data);
+                }
             } catch (error) {
                 console.error("Error fetching public questions:", error);
             } finally {
-                setIsLoading(false);
+                if (isMounted) {
+                    setIsLoading(false);
+                }
             }
         };
         fetchQuestions();
-    }, [limit]);
+        return () => { isMounted = false; };
+    }, [limit, cacheKey]);
 
     // Calculate count per Madhhab
     const countsByMadhhab = useMemo(() => {

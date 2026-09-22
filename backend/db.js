@@ -8,8 +8,12 @@ const pool = mysql.createPool({
     password: process.env.MYSQL_PASSWORD,
     database: process.env.MYSQL_DATABASE || 'defaultdb',
     waitForConnections: true,
-    connectionLimit: 10,
+    connectionLimit: 15,
+    maxIdle: 10,
+    idleTimeout: 60000,
     queueLimit: 0,
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 0,
     ssl: {
         rejectUnauthorized: false
     }
@@ -47,6 +51,23 @@ async function initDb() {
                 FOREIGN KEY (questionId) REFERENCES fatwa_questions(id) ON DELETE CASCADE
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
         `);
+
+        // Add performance indexes if they don't already exist
+        try {
+            await connection.query(`
+                CREATE INDEX idx_fatwa_status_created ON fatwa_questions(status, createdAt DESC);
+            `);
+        } catch (idxErr) {
+            // Index might already exist; continue
+        }
+
+        try {
+            await connection.query(`
+                CREATE INDEX idx_fatwa_status_madhhab ON fatwa_questions(status, madhhab, createdAt DESC);
+            `);
+        } catch (idxErr) {
+            // Index might already exist; continue
+        }
 
         connection.release();
     } catch (err) {
