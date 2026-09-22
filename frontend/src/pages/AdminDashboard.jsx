@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { FiLogOut, FiTrash2, FiSearch, FiExternalLink, FiPlus, FiFilter, FiMessageSquare, FiMenu, FiX } from 'react-icons/fi';
+import { FiLogOut, FiTrash2, FiSearch, FiExternalLink, FiPlus, FiFilter, FiMessageSquare, FiMenu, FiX, FiDownload } from 'react-icons/fi';
 import { API_BASE_URL } from '../config';
+import { exportSingleQuestionToDoc, exportQuestionsListToDoc } from '../utils/docxExport';
 
 const AdminDashboard = () => {
     const [questions, setQuestions] = useState([]);
@@ -173,15 +174,24 @@ const AdminDashboard = () => {
                                     onChange={(e) => setAnswerText(e.target.value)}
                                     placeholder="Begin writing the formal mas'ala response..."
                                 />
-                                <div className="flex flex-col md:flex-row justify-between items-center gap-4 pt-4">
-                                    <button onClick={() => toggleUrgency(selectedQuestion._id)} className={`flex items-center gap-2 text-sm font-bold ${selectedQuestion.isUrgent ? 'text-red-500' : 'text-slate-400'}`}>
-                                        <span className="material-symbols-outlined">{selectedQuestion.isUrgent ? 'priority_high' : 'notification_important'}</span>
-                                        {selectedQuestion.isUrgent ? 'Urgent Priority' : 'Mark as Urgent'}
-                                    </button>
+                                <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4">
+                                    <div className="flex items-center gap-3 flex-wrap">
+                                        <button onClick={() => toggleUrgency(selectedQuestion._id)} className={`flex items-center gap-2 text-sm font-bold ${selectedQuestion.isUrgent ? 'text-red-500' : 'text-slate-400'}`}>
+                                            <span className="material-symbols-outlined">{selectedQuestion.isUrgent ? 'priority_high' : 'notification_important'}</span>
+                                            {selectedQuestion.isUrgent ? 'Urgent Priority' : 'Mark as Urgent'}
+                                        </button>
+                                        <button
+                                            onClick={() => exportSingleQuestionToDoc(selectedQuestion)}
+                                            className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer"
+                                            title="Download this question as Word Doc"
+                                        >
+                                            <FiDownload /> Download Doc
+                                        </button>
+                                    </div>
                                     <button
                                         onClick={handleAnswerSubmit}
                                         disabled={isAnswering || !answerText.trim()}
-                                        className="w-full md:w-auto bg-primary text-white px-10 py-4 rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 disabled:opacity-50 transition-all"
+                                        className="w-full sm:w-auto bg-primary text-white px-10 py-4 rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 disabled:opacity-50 transition-all cursor-pointer"
                                     >
                                         {isAnswering ? 'Publishing...' : 'Publish Official Mas\'ala'}
                                     </button>
@@ -340,7 +350,17 @@ const AdminDashboard = () => {
                                     <h1 className="text-2xl md:text-3xl font-black">Questions</h1>
                                     <p className="text-slate-500 text-sm">Reviewing mas'ala requests.</p>
                                 </div>
-                                <button onClick={() => setShowNewModal(true)} className="flex items-center justify-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-bold text-sm shadow-xl shadow-primary/20 hover:scale-105 transition-all outline-none"><FiPlus /> New Record</button>
+                                <div className="flex items-center gap-3 flex-wrap">
+                                    <button
+                                        onClick={() => exportQuestionsListToDoc(filteredQuestions, "Fiqh File - Questions & Mas'ala Export")}
+                                        disabled={filteredQuestions.length === 0}
+                                        className="flex items-center justify-center gap-2 bg-slate-900 text-white px-5 py-3 rounded-xl font-bold text-sm shadow-md hover:bg-slate-800 disabled:opacity-50 transition-all cursor-pointer"
+                                        title="Download filtered questions as Word Doc (.docx)"
+                                    >
+                                        <FiDownload /> Download Doc
+                                    </button>
+                                    <button onClick={() => setShowNewModal(true)} className="flex items-center justify-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-bold text-sm shadow-xl shadow-primary/20 hover:scale-105 transition-all outline-none cursor-pointer"><FiPlus /> New Record</button>
+                                </div>
                             </div>
 
                             <div className="bg-white rounded-2xl md:rounded-3xl border border-slate-200 shadow-xl overflow-hidden">
@@ -378,9 +398,10 @@ const AdminDashboard = () => {
                                                     </td>
                                                     <td className="px-6 md:px-8 py-4 md:py-5 text-right">
                                                         <div className="flex justify-end gap-2 md:gap-3 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
-                                                            <button onClick={() => navigate(`/masala/${q._id}`)} className="p-1.5 md:p-2 text-slate-400 hover:text-primary transition-colors bg-white border border-slate-100 rounded-lg shadow-sm"><FiExternalLink size={14} /></button>
-                                                            <button onClick={() => { setSelectedQuestion(q); setAnswerText(q.answerText || ''); }} className="bg-slate-900 text-white text-[9px] md:text-[10px] px-3 md:px-4 py-1.5 md:py-2 rounded-lg font-black uppercase tracking-widest hover:bg-primary transition-all shadow-md">Manage</button>
-                                                            <button onClick={() => handleDelete(q._id)} className="p-1.5 md:p-2 text-slate-300 hover:text-red-500 transition-colors bg-white border border-slate-100 rounded-lg shadow-sm"><FiTrash2 size={14} /></button>
+                                                            <button onClick={() => exportSingleQuestionToDoc(q)} title="Download Doc (.docx)" className="p-1.5 md:p-2 text-slate-400 hover:text-emerald-600 transition-colors bg-white border border-slate-100 rounded-lg shadow-sm cursor-pointer"><FiDownload size={14} /></button>
+                                                            <button onClick={() => navigate(`/masala/${q._id}`)} title="View Mas'ala" className="p-1.5 md:p-2 text-slate-400 hover:text-primary transition-colors bg-white border border-slate-100 rounded-lg shadow-sm cursor-pointer"><FiExternalLink size={14} /></button>
+                                                            <button onClick={() => { setSelectedQuestion(q); setAnswerText(q.answerText || ''); }} className="bg-slate-900 text-white text-[9px] md:text-[10px] px-3 md:px-4 py-1.5 md:py-2 rounded-lg font-black uppercase tracking-widest hover:bg-primary transition-all shadow-md cursor-pointer">Manage</button>
+                                                            <button onClick={() => handleDelete(q._id)} title="Delete" className="p-1.5 md:p-2 text-slate-300 hover:text-red-500 transition-colors bg-white border border-slate-100 rounded-lg shadow-sm cursor-pointer"><FiTrash2 size={14} /></button>
                                                         </div>
                                                     </td>
                                                 </tr>

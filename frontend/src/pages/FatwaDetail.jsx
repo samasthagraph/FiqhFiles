@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { FaArrowLeft, FaUserCircle } from 'react-icons/fa';
 import { API_BASE_URL } from '../config';
 import { clientCache } from '../utils/clientCache';
+import { exportSingleQuestionToDoc } from '../utils/docxExport';
 
 const FatwaDetail = () => {
     const { id } = useParams();
@@ -88,15 +89,25 @@ const FatwaDetail = () => {
                     {/* Fatwa Content */}
                     <div className="bg-white rounded-3xl shadow-xl shadow-primary/5 overflow-hidden mb-12 border border-primary/10">
                         {/* Header details */}
-                        <div className="bg-background-light border-b border-primary/10 px-8 py-6 flex flex-wrap justify-between items-center gap-4">
+                        <div className="bg-background-light border-b border-primary/10 px-6 sm:px-8 py-5 flex flex-wrap justify-between items-center gap-4">
                             <div className="flex items-center gap-3">
                                 <span className="inline-flex items-center rounded-md bg-primary/20 px-3 py-1 text-sm font-bold text-primary uppercase">
                                     {fatwa.madhhab} Fiqh
                                 </span>
                             </div>
-                            <span className="text-slate-400 text-sm font-medium flex items-center gap-2">
-                                Published {new Date(fatwa.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
-                            </span>
+                            <div className="flex items-center gap-3 flex-wrap">
+                                <span className="text-slate-400 text-sm font-medium flex items-center gap-2">
+                                    Published {new Date(fatwa.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+                                </span>
+                                <button
+                                    onClick={() => exportSingleQuestionToDoc(fatwa)}
+                                    className="inline-flex items-center gap-1.5 bg-primary/10 hover:bg-primary text-primary hover:text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm cursor-pointer"
+                                    title="Download this Mas'ala as a Word Doc file"
+                                >
+                                    <span className="material-symbols-outlined text-base">description</span>
+                                    Download Doc
+                                </button>
+                            </div>
                         </div>
 
                         <div className="p-6 md:p-12 overflow-hidden">
