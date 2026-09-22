@@ -23,7 +23,8 @@ async function initDb() {
     try {
         console.log('Verifying Aiven MySQL database connection...');
         const connection = await pool.getConnection();
-        console.log('Connected to Aiven MySQL database: defaultdb');
+        const activeDb = process.env.MYSQL_DATABASE || 'defaultdb';
+        console.log(`Connected to Aiven MySQL database: ${activeDb}`);
 
         // Create fatwa_questions table
         await connection.query(`
