@@ -21,7 +21,14 @@ const AdminLogin = () => {
                 navigate('/admin');
             }
         } catch (err) {
-            setError('Invalid username or password');
+            console.error('Admin login error:', err);
+            if (err.response?.data?.message) {
+                setError(err.response.data.message);
+            } else if (err.code === 'ERR_NETWORK' || !err.response) {
+                setError(`Connection failed: Unable to reach API server at ${API_BASE_URL}. Please check your VITE_API_URL.`);
+            } else {
+                setError('Invalid username or password');
+            }
         } finally {
             setIsLoading(false);
         }
