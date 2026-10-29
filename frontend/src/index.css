@@ -2,40 +2,56 @@
 
 :root {
   color-scheme: light;
-  --color-primary: #481f4e;
-  --color-secondary: #c39565;
-  --color-accent: #c39565;
-  --color-gold: #c39565;
-  --color-plum: #481f4e;
-  --color-background-light: #faf7f4;
-  --color-background-dark: #faf7f4;
-  --font-display: 'Inter', system-ui, -apple-system, sans-serif;
+  --color-brand-dark: #15664a;
+  --color-brand-gold: #c8a136;
+  --color-brand-olive: #60834f;
+  --color-brand-light: #eef3f1;
+  --color-brand-surface: #c1d5cd;
+  --color-brand-muted: #7ea99a;
+
+  --color-primary: #15664a;
+  --color-secondary: #c8a136;
+  --color-accent: #c8a136;
+  --color-gold: #c8a136;
+  --color-background-light: #eef3f1;
+  --color-background-dark: #15664a;
+
+  --font-display: 'Inter', 'Poppins', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Poppins', 'Inter', sans-serif;
   --font-fn-kanaka-semibold: "FN Kanaka Semibold", "Anek Malayalam", sans-serif;
-  --font-rahna22: "Anek Malayalam", "Almarai", "Rahna22", sans-serif;
+  --font-rahna22: "Anek Malayalam", "Noto Sans Malayalam", "Almarai", sans-serif;
   --font-anek: "Anek Malayalam", sans-serif;
-  --font-almarai: "Almarai", sans-serif;
+  --font-noto: "Noto Sans Malayalam", sans-serif;
 }
 
 html, body {
   color-scheme: light !important;
-  background-color: #faf7f4 !important;
+  background-color: #eef3f1 !important;
   color: #0f172a !important;
 }
 
 @theme {
-  --color-primary: #481f4e;
-  --color-secondary: #c39565;
-  --color-accent: #c39565;
-  --color-gold: #c39565;
-  --color-plum: #481f4e;
-  --color-background-light: #faf7f4;
-  --color-background-dark: #faf7f4;
-  --font-display: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-malayalam: 'Anek Malayalam', 'Almarai', sans-serif;
+  --color-brand-dark: #15664a;
+  --color-brand-gold: #c8a136;
+  --color-brand-olive: #60834f;
+  --color-brand-light: #eef3f1;
+  --color-brand-surface: #c1d5cd;
+  --color-brand-muted: #7ea99a;
+
+  --color-primary: #15664a;
+  --color-secondary: #c8a136;
+  --color-accent: #c8a136;
+  --color-gold: #c8a136;
+  --color-background-light: #eef3f1;
+  --color-background-dark: #15664a;
+
+  --font-display: 'Inter', 'Poppins', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Poppins', 'Inter', sans-serif;
+  --font-malayalam: 'Anek Malayalam', 'Noto Sans Malayalam', sans-serif;
 }
 
 body {
-  @apply bg-background-light text-slate-900 font-display;
+  @apply bg-brand-light text-slate-900 font-display;
   overflow-wrap: anywhere;
   word-break: normal;
 }
@@ -44,18 +60,22 @@ h1, h2, h3, h4, h5, h6, p, span, div, textarea, blockquote, q {
   overflow-wrap: anywhere;
 }
 
+.font-heading {
+  font-family: var(--font-heading);
+}
+
 .font-fn-kanaka-semibold {
   font-family: var(--font-fn-kanaka-semibold);
 }
 
 .font-rahna22, .font-malayalam {
-  font-family: "Anek Malayalam", "Almarai", "Rahna22", sans-serif;
+  font-family: "Anek Malayalam", "Noto Sans Malayalam", "Almarai", "Rahna22", sans-serif;
 }
 
 .font-anek {
   font-family: "Anek Malayalam", sans-serif;
 }
 
-.font-almarai {
-  font-family: "Almarai", sans-serif;
+.font-noto {
+  font-family: "Noto Sans Malayalam", sans-serif;
 }

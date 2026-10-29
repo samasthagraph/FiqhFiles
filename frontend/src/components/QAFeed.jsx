@@ -71,34 +71,30 @@ const QAFeed = ({ limit }) => {
     }, [questions, selectedMadhhab, videosOnly, searchTerm]);
 
     return (
-        <section className="py-12 sm:py-16 bg-white" id="feed">
+        <section className="py-12 sm:py-16 bg-brand-light" id="feed">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 {/* Header & Filter Controls */}
-                <div className="flex flex-col gap-6 mb-8 pb-6 border-b border-slate-200">
-                    <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                <div className="flex flex-col gap-6 mb-10">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div>
-                            <div className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-secondary mb-1">
-                                <span className="size-1.5 bg-secondary"></span>
-                                <span>Verified Jurisprudence Archive</span>
-                            </div>
-                            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900">
+                            <h2 className="text-3xl font-black tracking-tight text-slate-900">
                                 {limit ? 'Latest Answers' : 'Browse by School of Thought'}
                             </h2>
-                            <p className="mt-1 text-xs sm:text-sm text-slate-600">
-                                Authenticated rulings and fatwas catalogued by classical Islamic jurisprudence.
+                            <p className="mt-1 text-sm sm:text-base text-slate-600">
+                                Verified rulings and mas'alas from qualified scholars.
                             </p>
                         </div>
 
                         {/* Search Input for archive view */}
                         {!limit && (
-                            <div className="relative w-full sm:w-80">
+                            <div className="relative w-full sm:w-72">
                                 <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                                 <input
                                     type="text"
-                                    placeholder="Search rulings, keywords..."
+                                    placeholder="Search rulings..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full pl-10 pr-8 py-2.5 border border-slate-300 bg-white text-xs sm:text-sm outline-none focus:border-slate-900 transition-all text-slate-900 placeholder:text-slate-400"
+                                    className="w-full pl-10 pr-8 py-2.5 rounded-lg border border-slate-300 bg-white text-sm outline-none focus:border-brand-dark focus:ring-2 focus:ring-brand-dark/20 transition-all text-slate-900"
                                 />
                                 {searchTerm && (
                                     <button onClick={() => setSearchTerm('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
@@ -109,14 +105,14 @@ const QAFeed = ({ limit }) => {
                         )}
                     </div>
 
-                    {/* Filter Buttons & Video Filter */}
-                    <div className="flex flex-wrap items-center gap-2 pt-2">
-                        <div className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-widest text-slate-500 mr-2 shrink-0">
-                            <FiFilter className="text-xs" /> Filter By:
+                    {/* Filter Pills and Videos Toggle */}
+                    <div className="flex flex-wrap items-center gap-2 pb-1">
+                        <div className="flex items-center gap-1.5 text-xs font-bold uppercase text-slate-500 mr-1 shrink-0">
+                            <FiFilter /> Filter:
                         </div>
 
-                        {/* Madhhab Buttons */}
-                        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none flex-wrap">
+                        {/* Madhhab Pills (Scrollable) */}
+                        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
                             {MADHHABS.map((madhhab) => {
                                 const isSelected = selectedMadhhab === madhhab && !videosOnly;
                                 const count = countsByMadhhab[madhhab] || 0;
@@ -124,32 +120,32 @@ const QAFeed = ({ limit }) => {
                                     <button
                                         key={madhhab}
                                         onClick={() => { setSelectedMadhhab(madhhab); setVideosOnly(false); }}
-                                        className={`shrink-0 flex items-center gap-2 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer border ${
+                                        className={`shrink-0 flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer ${
                                             isSelected
-                                                ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
-                                                : 'bg-white text-slate-700 hover:bg-slate-100 hover:text-slate-900 border-slate-300'
+                                                ? 'bg-brand-dark text-white shadow-md border border-brand-gold/30 scale-[1.02]'
+                                                : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
                                         }`}
                                     >
                                         <span>{madhhab}</span>
-                                        <span className={`text-[10px] px-1.5 py-0.5 font-mono font-bold ${isSelected ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600 border border-slate-200'}`}>
+                                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${isSelected ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-600'}`}>
                                             {count}
                                         </span>
                                     </button>
                                 );
                             })}
 
-                            {/* Videos Only Filter Button */}
+                            {/* Videos Only Filter Pill */}
                             <button
                                 onClick={() => setVideosOnly(!videosOnly)}
-                                className={`shrink-0 flex items-center gap-2 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer border ${
+                                className={`shrink-0 flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer ${
                                     videosOnly
-                                        ? 'bg-rose-700 text-white border-rose-700 shadow-xs'
-                                        : 'bg-white text-rose-700 hover:bg-rose-50 border-rose-300'
+                                        ? 'bg-brand-dark text-brand-gold shadow-md border-2 border-brand-gold scale-[1.02]'
+                                        : 'bg-white text-brand-dark hover:bg-brand-gold/10 border border-brand-gold/50'
                                 }`}
                                 title="Show rulings that have published video explanations"
                             >
                                 <span>▶ With Video</span>
-                                <span className={`text-[10px] px-1.5 py-0.5 font-mono font-bold ${videosOnly ? 'bg-white/20 text-white' : 'bg-rose-100 text-rose-800 border border-rose-200'}`}>
+                                <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${videosOnly ? 'bg-brand-gold text-brand-dark font-black' : 'bg-brand-gold/20 text-brand-dark font-bold'}`}>
                                     {totalVideosCount}
                                 </span>
                             </button>
@@ -160,13 +156,13 @@ const QAFeed = ({ limit }) => {
                 {/* Content Grid */}
                 {isLoading ? (
                     <div className="flex justify-center items-center py-20">
-                        <div className="animate-spin h-10 w-10 border-2 border-slate-900 border-t-transparent"></div>
+                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-dark"></div>
                     </div>
                 ) : filteredQuestions.length === 0 ? (
-                    <div className="text-center py-16 px-4 border border-slate-200 bg-slate-50/50">
-                        <span className="material-symbols-outlined text-4xl text-slate-400 mb-2">menu_book</span>
-                        <h3 className="text-base font-bold text-slate-900 mb-1">No Mas'alas Found</h3>
-                        <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto mb-6">
+                    <div className="text-center py-16 px-4 rounded-2xl border border-dashed border-slate-300 bg-white">
+                        <span className="material-symbols-outlined text-5xl text-slate-300 mb-3">menu_book</span>
+                        <h3 className="text-lg font-bold text-slate-800 mb-1">No mas'alas found</h3>
+                        <p className="text-sm text-slate-500 max-w-md mx-auto mb-6">
                             {videosOnly
                                 ? 'No rulings currently have video explanations under this selection.'
                                 : selectedMadhhab !== 'All' 
@@ -176,7 +172,7 @@ const QAFeed = ({ limit }) => {
                         {(selectedMadhhab !== 'All' || searchTerm || videosOnly) && (
                             <button
                                 onClick={() => { setSelectedMadhhab('All'); setVideosOnly(false); setSearchTerm(''); }}
-                                className="px-5 py-2.5 bg-slate-900 text-white text-xs font-black uppercase tracking-wider hover:bg-slate-800 transition-all cursor-pointer"
+                                className="px-5 py-2.5 rounded-lg bg-brand-dark text-white text-sm font-bold shadow-md hover:bg-brand-dark/90 transition-all cursor-pointer"
                             >
                                 Show All Mas'alas
                             </button>
@@ -185,60 +181,44 @@ const QAFeed = ({ limit }) => {
                 ) : (
                     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                         {filteredQuestions.map((q) => (
-                            <div
-                                key={q._id}
-                                className="flex flex-col border border-slate-200 bg-white hover:border-slate-400 transition-all shadow-2xs hover:shadow-sm"
-                            >
-                                <div className="p-5 sm:p-6 flex flex-col h-full">
-                                    {/* Card Header Tags */}
-                                    <div className="flex items-center justify-between gap-x-2 mb-3">
+                            <div key={q._id} className="flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white transition-all hover:shadow-xl hover:border-brand-gold/50 hover:-translate-y-1">
+                                <div className="p-6 flex flex-col h-full">
+                                    <div className="flex items-center justify-between gap-x-2 mb-4">
                                         <div className="flex items-center gap-1.5 flex-wrap">
-                                            <span className="inline-block border border-slate-300 bg-slate-50 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-slate-800">
+                                            <span className="inline-flex items-center rounded-md bg-brand-dark/10 px-2.5 py-1 text-xs font-black text-brand-dark uppercase tracking-tight">
                                                 {q.madhhab}
                                             </span>
                                             {q.hasVideo && (
-                                                <span className="inline-flex items-center gap-1 border border-rose-300 bg-rose-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-rose-700">
+                                                <span className="inline-flex items-center gap-1 rounded-md bg-brand-gold/20 border border-brand-gold/40 px-2 py-0.5 text-[10px] font-bold text-brand-dark">
                                                     <span>▶</span> Video
                                                 </span>
                                             )}
                                         </div>
-                                        <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400">
+                                        <span className="text-[11px] font-medium text-slate-400">
                                             {new Date(q.createdAt).toLocaleDateString()}
                                         </span>
                                     </div>
-
-                                    {/* Question Text */}
-                                    <h3
-                                        className="text-base sm:text-lg font-bold mb-3 line-clamp-3 break-words font-rahna22 text-slate-900 leading-snug"
-                                        title={q.questionText}
-                                    >
+                                    <h3 className="text-lg sm:text-xl font-bold mb-3 line-clamp-3 break-words font-rahna22 text-slate-900 leading-snug" title={q.questionText}>
                                         {q.questionText}
                                     </h3>
-
-                                    {/* Answer Snippet Section */}
-                                    <div className="mt-auto pt-3 border-t border-slate-100">
-                                        <div className="border-l-2 border-primary/40 bg-slate-50/70 pl-3 py-2 my-2">
-                                            <div className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">
-                                                Official Ruling Excerpt
-                                            </div>
-                                            <p className="text-xs sm:text-sm leading-relaxed text-slate-700 line-clamp-3 break-words font-rahna22">
-                                                {q.answerText}
-                                            </p>
+                                    <div className="border-t border-slate-100 pt-4 mt-auto">
+                                        <div className="flex items-center gap-1.5 mb-2.5">
+                                            <span className="material-symbols-outlined text-brand-dark text-base">verified_user</span>
+                                            <span className="text-[10px] font-black uppercase tracking-wider text-brand-dark">Official Ruling</span>
                                         </div>
+                                        <p className="text-sm sm:text-base leading-relaxed text-slate-600 line-clamp-3 break-words font-rahna22 mb-4">
+                                            {q.answerText}
+                                        </p>
 
-                                        {/* Card Actions */}
-                                        <div className="flex items-center justify-between gap-2 pt-3 mt-2 border-t border-slate-200">
-                                            <Link
-                                                to={`/masala/${q._id}`}
-                                                className="inline-flex items-center gap-1 text-xs font-black uppercase tracking-wider text-slate-900 hover:text-primary transition-colors"
-                                            >
-                                                Read Mas'ala <span>&rarr;</span>
+                                        <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-100">
+                                            <Link to={`/masala/${q._id}`} className="inline-flex items-center gap-1 text-xs sm:text-sm font-bold text-brand-dark hover:text-brand-gold transition-colors">
+                                                Read Full Mas'ala <span>&rarr;</span>
                                             </Link>
 
                                             {q.hasVideo && (
                                                 <button
                                                     onClick={() => setActiveVideoModal(q)}
-                                                    className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-300 transition-all cursor-pointer active:scale-95"
+                                                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-bold bg-brand-gold/20 hover:bg-brand-gold text-brand-dark border border-brand-gold/40 transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95"
                                                     title="Watch video explanation"
                                                 >
                                                     <span>▶</span> Watch
@@ -254,50 +234,45 @@ const QAFeed = ({ limit }) => {
 
                 {limit && filteredQuestions.length > 0 && (
                     <div className="mt-12 text-center">
-                        <Link
-                            to="/masalas"
-                            className="inline-flex items-center justify-center border-2 border-slate-900 bg-white px-8 py-3 text-xs font-black uppercase tracking-widest text-slate-900 hover:bg-slate-900 hover:text-white shadow-2xs transition-all active:scale-98"
-                        >
-                            Browse Complete Archive &rarr;
+                        <Link to="/masalas" className="inline-flex items-center justify-center rounded-lg border-2 border-brand-dark bg-white px-8 py-3.5 text-sm font-bold text-brand-dark hover:bg-brand-dark hover:text-white shadow-sm transition-all hover:scale-105 active:scale-95 uppercase tracking-wider">
+                            Browse All in Archive &rarr;
                         </Link>
                     </div>
                 )}
             </div>
 
-            {/* Video Lightbox Modal */}
+            {/* Lightbox Video Modal for watching directly from Feed */}
             {activeVideoModal && (
                 <div
-                    className="fixed inset-0 bg-slate-950/80 backdrop-blur-xs z-[120] flex items-center justify-center p-4 animate-in fade-in duration-150"
+                    className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[120] flex items-center justify-center p-4 animate-in fade-in duration-200"
                     onClick={() => setActiveVideoModal(null)}
                 >
                     <div
-                        className="bg-white border border-slate-300 w-full max-w-3xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-150"
+                        className="bg-white rounded-2xl w-full max-w-3xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200 border border-slate-200"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <div className="p-4 sm:p-5 flex items-center justify-between border-b border-slate-200 bg-slate-50">
+                        <div className="p-4 sm:p-5 flex items-center justify-between border-b border-brand-olive/30 bg-brand-dark text-white">
                             <div className="flex items-center gap-2">
-                                <span className="size-7 bg-rose-600 text-white flex items-center justify-center font-bold text-xs">
+                                <span className="size-8 rounded-lg bg-brand-gold text-brand-dark flex items-center justify-center font-bold text-xs">
                                     ▶
                                 </span>
                                 <div>
-                                    <h3 className="font-bold text-xs sm:text-sm uppercase tracking-wider text-slate-900 line-clamp-1">
+                                    <h3 className="font-bold text-sm sm:text-base text-white line-clamp-1">
                                         Video Explanation / വീഡിയോ വിവരണം
                                     </h3>
-                                    <p className="text-[10px] font-mono uppercase tracking-wider text-slate-500">
-                                        {activeVideoModal.madhhab} Fiqh
-                                    </p>
+                                    <p className="text-[11px] text-brand-surface">{activeVideoModal.madhhab} Fiqh</p>
                                 </div>
                             </div>
                             <button
                                 onClick={() => setActiveVideoModal(null)}
-                                className="p-1 text-slate-400 hover:text-slate-900 hover:bg-slate-200 transition-colors cursor-pointer"
+                                className="p-1.5 rounded-lg text-brand-surface hover:text-white hover:bg-white/10 transition-colors"
                             >
                                 <FiX size={20} />
                             </button>
                         </div>
 
                         <div className="p-4 sm:p-6 space-y-4">
-                            <p className="text-xs sm:text-sm font-medium italic text-slate-800 font-rahna22 bg-slate-50 p-3 border-l-2 border-slate-400">
+                            <p className="text-xs sm:text-sm font-medium italic text-slate-700 font-rahna22 bg-slate-50 p-3 rounded-lg border border-slate-200">
                                 "{activeVideoModal.questionText}"
                             </p>
 
@@ -306,16 +281,16 @@ const QAFeed = ({ limit }) => {
                                 title={`Video Explanation: ${activeVideoModal.questionText}`}
                             />
 
-                            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t border-slate-100">
-                                <span className="text-[11px] font-mono text-slate-500">
+                            <div className="flex items-center justify-between gap-3 pt-2">
+                                <span className="text-xs text-slate-400">
                                     Published: {new Date(activeVideoModal.createdAt).toLocaleDateString()}
                                 </span>
                                 <Link
                                     to={`/masala/${activeVideoModal._id}`}
                                     onClick={() => setActiveVideoModal(null)}
-                                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-900 text-white text-xs font-black uppercase tracking-wider hover:bg-primary transition-all"
+                                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-brand-dark text-white text-xs font-bold hover:bg-brand-dark/90 transition-all shadow-md"
                                 >
-                                    <span>Read Complete Mas'ala Details</span>
+                                    <span>Read Complete Mas'ala & Discussion</span>
                                     <span>&rarr;</span>
                                 </Link>
                             </div>

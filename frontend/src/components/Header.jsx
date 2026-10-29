@@ -1,37 +1,26 @@
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { FiMenu, FiX } from 'react-icons/fi';
 
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const location = useLocation();
 
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-    const isActive = (path) => {
-        if (path === '/' && location.pathname === '/') return true;
-        if (path !== '/' && location.pathname.startsWith(path)) return true;
-        return false;
-    };
-
     return (
-        <header className="sticky top-0 z-50 border-t-2 border-secondary bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
+        <header className="sticky top-0 z-50 bg-brand-dark text-brand-light border-b border-brand-olive/30 shadow-md">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div className="flex h-16 sm:h-20 items-center justify-between">
-                    {/* Logo & Brand Identity */}
-                    <Link to="/" className="flex items-center gap-3 text-slate-900 group">
+                <div className="flex h-20 items-center justify-between whitespace-nowrap">
+                    {/* Brand Logo matching samasthagraph.com */}
+                    <Link to="/" className="flex items-center gap-3 group">
                         <img
-                            src="/logo.png"
-                            alt="Fiqh File Logo"
-                            className="h-10 sm:h-12 w-auto object-contain transition-transform group-hover:scale-[1.02]"
+                            src="/Logo_white.png"
+                            alt="Samastha Graph"
+                            className="h-12 sm:h-14 w-auto object-contain transition-transform group-hover:scale-105"
                         />
-                        <div className="hidden sm:block">
-                            <span className="block text-base font-black tracking-tight text-primary leading-none">
-                                FIQH FILES
-                            </span>
-                            <span className="block text-[9px] font-black uppercase tracking-widest text-slate-500 mt-0.5">
-                                Samastha Graph Archive
-                            </span>
+                        <div className="border-l border-brand-olive/50 pl-3 hidden sm:block">
+                            <span className="block text-xs font-black uppercase tracking-widest text-brand-gold">Fiqh Files</span>
+                            <span className="block text-[10px] text-brand-surface font-medium">Samastha Knowledge Base</span>
                         </div>
                     </Link>
 
@@ -39,27 +28,19 @@ const Header = () => {
                     <nav className="hidden md:flex items-center gap-8">
                         <Link
                             to="/"
-                            className={`text-xs font-black uppercase tracking-wider transition-colors pb-1 border-b-2 ${
-                                isActive('/')
-                                    ? 'text-primary border-primary'
-                                    : 'text-slate-600 border-transparent hover:text-primary hover:border-slate-300'
-                            }`}
+                            className="text-sm font-semibold uppercase tracking-wider text-brand-light hover:text-brand-gold transition-colors"
                         >
                             Home
                         </Link>
                         <Link
                             to="/masalas"
-                            className={`text-xs font-black uppercase tracking-wider transition-colors pb-1 border-b-2 ${
-                                isActive('/masala')
-                                    ? 'text-primary border-primary'
-                                    : 'text-slate-600 border-transparent hover:text-primary hover:border-slate-300'
-                            }`}
+                            className="text-sm font-semibold uppercase tracking-wider text-brand-light hover:text-brand-gold transition-colors"
                         >
                             Mas'ala Archive
                         </Link>
                         <Link
                             to="/ask"
-                            className="inline-flex items-center justify-center bg-slate-900 hover:bg-primary text-white px-5 py-2.5 text-xs font-black uppercase tracking-widest shadow-sm transition-all border border-slate-900 hover:border-primary active:scale-98"
+                            className="inline-flex items-center justify-center rounded-lg bg-brand-gold hover:bg-yellow-500 text-brand-dark px-6 py-2.5 text-xs font-black uppercase tracking-wider shadow-md transition-all hover:scale-105 active:scale-95"
                         >
                             Ask a Question
                         </Link>
@@ -67,36 +48,36 @@ const Header = () => {
 
                     {/* Mobile Menu Toggle */}
                     <button
-                        className="md:hidden text-slate-900 p-2 border border-slate-200"
+                        className="md:hidden text-brand-light hover:text-brand-gold p-2 transition-colors cursor-pointer"
                         onClick={toggleMenu}
                         aria-label="Toggle Menu"
                     >
-                        {isMenuOpen ? <FiX size={22} /> : <FiMenu size={22} />}
+                        {isMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
                     </button>
                 </div>
             </div>
 
             {/* Mobile Navigation Drawer */}
             {isMenuOpen && (
-                <div className="border-b border-slate-200 bg-white px-4 py-5 md:hidden shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
-                    <div className="mx-auto max-w-7xl flex flex-col gap-3">
+                <div className="border-b border-brand-olive/30 bg-brand-dark/98 backdrop-blur-md px-4 py-6 md:hidden shadow-2xl animate-in fade-in slide-in-from-top-4 duration-200">
+                    <div className="mx-auto max-w-7xl flex flex-col gap-4">
                         <Link
                             to="/"
-                            className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2.5 uppercase tracking-wider"
+                            className="text-base font-bold uppercase tracking-wider text-brand-light hover:text-brand-gold border-b border-brand-olive/30 pb-2.5"
                             onClick={() => setIsMenuOpen(false)}
                         >
                             Home
                         </Link>
                         <Link
                             to="/masalas"
-                            className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2.5 uppercase tracking-wider"
+                            className="text-base font-bold uppercase tracking-wider text-brand-light hover:text-brand-gold border-b border-brand-olive/30 pb-2.5"
                             onClick={() => setIsMenuOpen(false)}
                         >
                             Mas'ala Archive
                         </Link>
                         <Link
                             to="/ask"
-                            className="w-full text-center bg-slate-900 hover:bg-primary text-white px-5 py-3 text-xs font-black uppercase tracking-widest shadow-sm"
+                            className="w-full text-center rounded-lg bg-brand-gold text-brand-dark px-5 py-3 text-sm font-black uppercase tracking-wider shadow-lg"
                             onClick={() => setIsMenuOpen(false)}
                         >
                             Ask a Question
