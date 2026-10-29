@@ -53,7 +53,7 @@ const FatwaDetail = () => {
             <div className="min-h-screen bg-slate-50 flex flex-col">
                 <Header />
                 <div className="flex-grow flex justify-center items-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+                    <div className="animate-spin h-10 w-10 border-2 border-primary border-t-transparent"></div>
                 </div>
             </div>
         );
@@ -63,10 +63,10 @@ const FatwaDetail = () => {
         return (
             <div className="min-h-screen bg-slate-50 flex flex-col">
                 <Header />
-                <div className="flex-grow flex flex-col justify-center items-center text-center p-4">
-                    <h2 className="text-3xl font-bold text-secondary mb-2">Mas'ala Not Found</h2>
-                    <p className="text-slate-500 mb-6">The ruling you are looking for does not exist or has not been answered yet.</p>
-                    <Link to="/masalas" className="bg-primary text-white px-6 py-3 rounded-full font-medium hover:bg-primary/90 transition-colors">
+                <div className="flex-grow flex flex-col justify-center items-center text-center p-6">
+                    <h2 className="text-2xl font-bold text-slate-900 mb-2">Mas'ala Not Found</h2>
+                    <p className="text-slate-500 mb-6 text-sm">The ruling you are looking for does not exist or has not been answered yet.</p>
+                    <Link to="/masalas" className="bg-primary text-white px-6 py-2.5 font-bold text-xs uppercase tracking-wider hover:bg-primary/90 transition-colors">
                         Browse All Mas'alas
                     </Link>
                 </div>
@@ -78,100 +78,97 @@ const FatwaDetail = () => {
         <div className="min-h-screen bg-slate-50 flex flex-col">
             <Header />
 
-            <main className="flex-1 py-12 px-4 sm:px-6 lg:px-8">
+            <main className="flex-1 py-8 sm:py-10 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-4xl mx-auto">
 
                     {/* Back Link */}
-                    <Link to="/masalas" className="inline-flex items-center gap-2 text-slate-500 hover:text-primary transition-colors mb-8 font-medium">
+                    <Link to="/masalas" className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-primary transition-colors mb-6">
                         <span className="material-symbols-outlined text-sm">arrow_back</span> Back to all Mas'alas
                     </Link>
 
-                    {/* Fatwa Content */}
-                    <div className="bg-white rounded-3xl shadow-xl shadow-primary/5 overflow-hidden mb-12 border border-primary/10">
-                        {/* Header details */}
-                        <div className="bg-background-light border-b border-primary/10 px-6 sm:px-8 py-5 flex flex-wrap justify-between items-center gap-4">
-                            <div className="flex items-center gap-2.5 flex-wrap">
-                                <span className="inline-flex items-center rounded-md bg-primary/20 px-3 py-1 text-sm font-bold text-primary uppercase">
+                    {/* Main Mas'ala Container (Clean, Non-Rounded, Professional) */}
+                    <article className="bg-white border border-slate-300 shadow-sm mb-10">
+                        {/* Header details bar */}
+                        <div className="bg-slate-100/80 border-b border-slate-300 px-6 py-3.5 flex flex-wrap justify-between items-center gap-3">
+                            <div className="flex items-center gap-2 flex-wrap">
+                                <span className="inline-flex items-center bg-slate-200 text-slate-800 px-2.5 py-1 text-xs font-bold uppercase tracking-wider border border-slate-300">
                                     {fatwa.madhhab} Fiqh
                                 </span>
                                 {fatwa.hasVideo && (
-                                    <span className="inline-flex items-center gap-1.5 rounded-md bg-rose-100 text-rose-700 px-3 py-1 text-xs font-black uppercase tracking-wider border border-rose-200">
+                                    <span className="inline-flex items-center gap-1 bg-rose-50 text-rose-700 px-2.5 py-1 text-xs font-bold uppercase tracking-wider border border-rose-200">
                                         <span>▶</span> Video Available
                                     </span>
                                 )}
                             </div>
                             <div className="flex items-center gap-3 flex-wrap">
-                                <span className="text-slate-400 text-sm font-medium flex items-center gap-2">
+                                <span className="text-slate-500 text-xs font-medium">
                                     Published {new Date(fatwa.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
                                 </span>
                                 <button
                                     onClick={() => exportSingleQuestionToDoc(fatwa)}
-                                    className="inline-flex items-center gap-1.5 bg-primary/10 hover:bg-primary text-primary hover:text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm cursor-pointer"
+                                    className="inline-flex items-center gap-1.5 bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 px-3 py-1.5 text-xs font-bold transition-all shadow-sm cursor-pointer"
                                     title="Download this Mas'ala as a Word Doc file"
                                 >
-                                    <span className="material-symbols-outlined text-base">description</span>
+                                    <span className="material-symbols-outlined text-sm">description</span>
                                     Download Doc
                                 </button>
                             </div>
                         </div>
 
-                        <div className="p-6 md:p-12 overflow-hidden">
-                            {/* The Question */}
-                            <div className="mb-8 md:mb-12 relative overflow-hidden">
-                                <h2 className="text-xs sm:text-sm font-black text-secondary uppercase tracking-[0.2em] mb-4">The Question</h2>
-                                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 leading-snug sm:leading-relaxed break-words font-rahna22">
+                        {/* Content Body: strictly ordered as Question -> Video -> Answer */}
+                        <div className="p-6 md:p-8 space-y-6">
+
+                            {/* 1. THE QUESTION */}
+                            <div className="space-y-2">
+                                <h2 className="text-[11px] font-black text-slate-400 uppercase tracking-widest">
+                                    The Question / ചോദ്യം
+                                </h2>
+                                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 leading-snug break-words font-rahna22">
                                     "{fatwa.questionText}"
                                 </h1>
                             </div>
 
-                            <hr className="border-primary/10 mb-10" />
+                            {/* 2. THE VIDEO (directly embedded without redundant headings/descriptions) */}
+                            {fatwa.hasVideo && fatwa.videoUrl && (
+                                <div className="pt-2 pb-2">
+                                    <VideoPlayer videoUrl={fatwa.videoUrl} title={fatwa.questionText} />
+                                </div>
+                            )}
 
-                            {/* The Answer */}
-                            <div className="relative overflow-hidden">
-                                <div className="flex items-center gap-2.5 mb-6">
-                                    <span className="material-symbols-outlined text-primary text-2xl">verified_user</span>
-                                    <h2 className="text-xs sm:text-sm font-black text-primary uppercase tracking-widest">
-                                        The Answer
+                            {/* Thin Divider */}
+                            <hr className="border-slate-200 my-4" />
+
+                            {/* 3. THE ANSWER (Compact, Professional Font & Alignment) */}
+                            <div className="space-y-2.5">
+                                <div className="flex items-center gap-1.5">
+                                    <span className="material-symbols-outlined text-primary text-base">verified</span>
+                                    <h2 className="text-xs font-black text-primary uppercase tracking-widest">
+                                        The Answer / മറുപടി
                                     </h2>
                                 </div>
-                                <div className="text-xl sm:text-2xl md:text-[1.65rem] text-slate-800 leading-relaxed sm:leading-loose whitespace-pre-wrap break-words font-rahna22 font-medium">
+                                <div className="text-sm sm:text-base text-slate-800 leading-relaxed sm:leading-7 whitespace-pre-wrap break-words font-rahna22 text-left">
                                     {fatwa.answerText}
                                 </div>
                             </div>
 
-                            {/* Published Video Explanation Section */}
-                            {fatwa.hasVideo && (
-                                <div className="mt-10 pt-8 border-t border-slate-200/80">
-                                    <div className="flex items-center gap-2.5 mb-4">
-                                        <span className="material-symbols-outlined text-rose-600 text-2xl">smart_display</span>
-                                        <div>
-                                            <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
-                                                Published Video Explanation / വീഡിയോ വിവരണം
-                                            </h3>
-                                            <p className="text-xs text-slate-500">Official video presentation and explanation for this ruling.</p>
-                                        </div>
-                                    </div>
-                                    <VideoPlayer videoUrl={fatwa.videoUrl} title={`Video Explanation: ${fatwa.questionText}`} />
-                                </div>
-                            )}
                         </div>
-                    </div>
+                    </article>
 
-                    {/* Comments Section */}
-                    <div className="bg-white rounded-3xl p-8 shadow-sm border border-primary/10">
-                        <h3 className="text-2xl font-bold text-slate-900 mb-8">Discussion ({fatwa.comments?.length || 0})</h3>
+                    {/* Discussion & Comments Section (Clean, Non-Rounded) */}
+                    <div className="bg-white border border-slate-300 p-6 md:p-8 shadow-sm">
+                        <h3 className="text-lg font-bold text-slate-900 mb-6">Discussion & Comments ({fatwa.comments?.length || 0})</h3>
 
                         {/* Add Comment Form */}
-                        <form onSubmit={handleSubmit(onCommentSubmit)} className="mb-10 bg-slate-50/70 p-6 sm:p-8 rounded-2xl border border-primary/10">
-                            <h4 className="font-bold text-slate-800 mb-4">Leave a comment</h4>
-                            <div className="space-y-4">
+                        <form onSubmit={handleSubmit(onCommentSubmit)} className="mb-8 bg-slate-50 p-5 sm:p-6 border border-slate-200">
+                            <h4 className="font-bold text-slate-800 text-xs uppercase tracking-wider mb-3">Leave a reflection</h4>
+                            <div className="space-y-3">
                                 <div>
                                     <label className="sr-only">Name</label>
                                     <input
                                         type="text"
                                         placeholder="Your Name"
                                         {...register("name", { required: true })}
-                                        className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 bg-white"
+                                        className="w-full px-3.5 py-2.5 border border-slate-300 focus:outline-none focus:border-primary bg-white text-sm"
                                     />
                                     {errors.name && <span className="text-red-500 text-xs mt-1 block">Name is required</span>}
                                 </div>
@@ -181,36 +178,36 @@ const FatwaDetail = () => {
                                         rows="3"
                                         placeholder="Add your respectful reflection..."
                                         {...register("text", { required: true })}
-                                        className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 bg-white font-rahna22"
+                                        className="w-full px-3.5 py-2.5 border border-slate-300 focus:outline-none focus:border-primary bg-white font-rahna22 text-sm"
                                     ></textarea>
                                     {errors.text && <span className="text-red-500 text-xs mt-1 block">Comment is required</span>}
                                 </div>
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="bg-primary text-white px-6 py-2.5 rounded-xl font-bold hover:bg-primary/90 transition-all text-sm disabled:opacity-50"
+                                    className="bg-slate-900 hover:bg-primary text-white px-5 py-2 font-bold text-xs uppercase tracking-wider transition-all disabled:opacity-50 cursor-pointer"
                                 >
-                                    {isSubmitting ? 'Posting...' : 'Post Comment'}
+                                    {isSubmitting ? 'Posting...' : 'Post Reflection'}
                                 </button>
                             </div>
                         </form>
 
                         {/* Existing Comments */}
                         {fatwa.comments && fatwa.comments.length > 0 ? (
-                            <div className="space-y-6">
+                            <div className="space-y-4">
                                 {fatwa.comments.map((comment, index) => (
-                                    <div key={index} className="flex gap-4 p-4 rounded-xl bg-slate-50 border border-slate-100">
-                                        <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold shrink-0">
+                                    <div key={index} className="flex gap-3.5 p-3.5 bg-slate-50 border border-slate-200">
+                                        <div className="size-8 bg-primary/10 text-primary flex items-center justify-center font-bold text-xs shrink-0">
                                             {comment.name ? comment.name.slice(0, 2).toUpperCase() : '??'}
                                         </div>
-                                        <div>
+                                        <div className="flex-1 min-w-0">
                                             <div className="flex items-center gap-2 mb-1">
-                                                <h5 className="font-bold text-sm text-slate-900">{comment.name}</h5>
-                                                <span className="text-slate-400 text-xs">
+                                                <h5 className="font-bold text-xs text-slate-900">{comment.name}</h5>
+                                                <span className="text-slate-400 text-[10px]">
                                                     {new Date(comment.createdAt).toLocaleDateString()}
                                                 </span>
                                             </div>
-                                            <p className="text-slate-700 text-sm leading-relaxed font-rahna22">
+                                            <p className="text-slate-700 text-xs sm:text-sm leading-relaxed font-rahna22">
                                                 {comment.text}
                                             </p>
                                         </div>
@@ -218,7 +215,7 @@ const FatwaDetail = () => {
                                 ))}
                             </div>
                         ) : (
-                            <p className="text-slate-400 italic text-center py-6">No comments yet. Be the first to reflect.</p>
+                            <p className="text-slate-400 text-xs italic text-center py-4">No comments yet.</p>
                         )}
                     </div>
 

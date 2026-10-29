@@ -46,23 +46,18 @@ export function parseVideoUrl(url) {
 }
 
 /**
- * Responsive Video Player Component
+ * Professional, clean Video Player Component (no excessive rounded borders)
  */
 const VideoPlayer = ({ videoUrl, title = "Mas'ala Video Explanation", className = "" }) => {
     const video = parseVideoUrl(videoUrl);
 
     if (!video) {
-        return (
-            <div className={`p-6 bg-slate-50 border border-slate-200 rounded-2xl text-center text-slate-500 ${className}`}>
-                <span className="material-symbols-outlined text-4xl text-rose-500 mb-2 block">videocam</span>
-                <p className="font-bold text-sm">Video explanation published on official channels.</p>
-            </div>
-        );
+        return null;
     }
 
     if (video.type === 'youtube' || video.type === 'vimeo') {
         return (
-            <div className={`relative w-full overflow-hidden rounded-2xl bg-black shadow-xl border border-slate-200 ${className}`}>
+            <div className={`relative w-full overflow-hidden bg-black border border-slate-300 shadow-sm ${className}`}>
                 <div className="relative pt-[56.25%]">
                     <iframe
                         src={video.embedUrl}
@@ -78,7 +73,7 @@ const VideoPlayer = ({ videoUrl, title = "Mas'ala Video Explanation", className 
 
     if (video.type === 'direct') {
         return (
-            <div className={`w-full overflow-hidden rounded-2xl bg-black shadow-xl border border-slate-200 ${className}`}>
+            <div className={`w-full overflow-hidden bg-black border border-slate-300 shadow-sm ${className}`}>
                 <video
                     controls
                     src={video.url}
@@ -92,24 +87,19 @@ const VideoPlayer = ({ videoUrl, title = "Mas'ala Video Explanation", className 
 
     // External video platform (Facebook, Instagram, Drive, etc.)
     return (
-        <div className={`p-6 bg-gradient-to-r from-rose-50 to-orange-50 border border-rose-200 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm ${className}`}>
-            <div className="flex items-center gap-3 text-center sm:text-left">
-                <div className="size-12 rounded-xl bg-rose-600 text-white flex items-center justify-center font-bold text-xl shadow-md shrink-0 mx-auto sm:mx-0">
-                    ▶
-                </div>
-                <div>
-                    <h4 className="font-bold text-slate-900 text-sm sm:text-base">{title}</h4>
-                    <p className="text-xs text-slate-500">Available to watch on external video platform.</p>
-                </div>
+        <div className={`p-4 bg-slate-50 border border-slate-300 flex flex-col sm:flex-row items-center justify-between gap-3 ${className}`}>
+            <div className="flex items-center gap-3">
+                <span className="text-rose-600 font-bold text-base">▶</span>
+                <span className="font-bold text-slate-800 text-sm">{title}</span>
             </div>
             <a
                 href={video.url}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white px-6 py-3 rounded-xl font-bold text-xs shadow-md transition-all shrink-0 hover:scale-105 active:scale-95 cursor-pointer"
+                className="inline-flex items-center gap-1.5 bg-slate-900 hover:bg-primary text-white px-4 py-2 text-xs font-bold transition-all shrink-0 cursor-pointer"
             >
                 <span>Watch on Video Platform</span>
-                <span className="material-symbols-outlined text-sm">open_in_new</span>
+                <span className="material-symbols-outlined text-xs">open_in_new</span>
             </a>
         </div>
     );
