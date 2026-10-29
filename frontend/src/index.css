@@ -79,3 +79,11 @@ h1, h2, h3, h4, h5, h6, p, span, div, textarea, blockquote, q {
 .font-noto {
   font-family: "Noto Sans Malayalam", sans-serif;
 }
+
+.hero-pattern {
+  background-color: #15664a;
+  background-image: radial-gradient(#60834f 1.2px, transparent 1.2px);
+  background-size: 30px 30px;
+  background-position: 0 0, 15px 15px;
+}
+

@@ -7,12 +7,17 @@ const FatwasPage = () => {
             <Header />
 
             <main className="flex-1">
-                <div className="py-10 text-center px-4">
-                    <h1 className="text-3xl md:text-5xl font-black text-slate-900 mb-3 tracking-tight">All Mas'alas Archive</h1>
-                    <p className="max-w-2xl mx-auto text-base text-slate-600">
-                        Browse the complete collection of authentic Islamic rulings from Samastha Graph.
-                    </p>
-                </div>
+                {/* Archive Hero Banner with hero-pattern */}
+                <section className="relative hero-pattern text-white py-12 sm:py-16 px-4 text-center overflow-hidden border-b border-brand-olive/30 shadow-inner">
+                    <div className="absolute top-0 right-0 -mt-16 -mr-16 w-72 h-72 bg-brand-olive rounded-full mix-blend-screen filter blur-3xl opacity-30 pointer-events-none"></div>
+                    <div className="relative z-10 max-w-4xl mx-auto">
+                        <h1 className="text-3xl md:text-5xl font-black text-white mb-3 tracking-tight">All Mas'alas Archive</h1>
+                        <p className="max-w-2xl mx-auto text-base text-brand-surface">
+                            Browse the complete collection of authentic Islamic rulings from Samastha Graph.
+                        </p>
+                    </div>
+                </section>
+
                 <QAFeed />
             </main>
 
