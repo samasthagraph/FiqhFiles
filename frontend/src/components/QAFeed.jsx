@@ -1,9 +1,10 @@
-﻿import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { FiSearch, FiFilter, FiX } from 'react-icons/fi';
 import { API_BASE_URL } from '../config';
 import { clientCache } from '../utils/clientCache';
+import VideoPlayer from './VideoPlayer';
 
 const MADHHABS = ["All", "Shafi'i", "Hanafi", "Maliki", "Hanbali", "General / No Preference"];
 
@@ -14,7 +15,11 @@ const QAFeed = ({ limit }) => {
     const [questions, setQuestions] = useState(cached || []);
     const [isLoading, setIsLoading] = useState(!cached || cached.length === 0);
     const [selectedMadhhab, setSelectedMadhhab] = useState('All');
+    const [videosOnly, setVideosOnly] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+
+    // Modal state for playing video directly from feed
+    const [activeVideoModal, setActiveVideoModal] = useState(null);
 
     useEffect(() => {
         let isMounted = true;
@@ -49,16 +54,21 @@ const QAFeed = ({ limit }) => {
         return counts;
     }, [questions]);
 
-    // Filter questions by Madhhab and search query
+    const totalVideosCount = useMemo(() => {
+        return questions.filter(q => q.hasVideo).length;
+    }, [questions]);
+
+    // Filter questions by Madhhab, Video-Only, and search query
     const filteredQuestions = useMemo(() => {
         return questions.filter(q => {
             const matchesMadhhab = selectedMadhhab === 'All' || q.madhhab === selectedMadhhab;
+            const matchesVideo = !videosOnly || q.hasVideo;
             const matchesSearch = !searchTerm || 
                 q.questionText.toLowerCase().includes(searchTerm.toLowerCase()) || 
                 (q.answerText && q.answerText.toLowerCase().includes(searchTerm.toLowerCase()));
-            return matchesMadhhab && matchesSearch;
+            return matchesMadhhab && matchesVideo && matchesSearch;
         });
-    }, [questions, selectedMadhhab, searchTerm]);
+    }, [questions, selectedMadhhab, videosOnly, searchTerm]);
 
     return (
         <section className="py-12 sm:py-16 bg-white" id="feed">
@@ -95,55 +105,51 @@ const QAFeed = ({ limit }) => {
                         )}
                     </div>
 
-                    {/* Mobile Madhhab Filter Dropdown */}
-                    <div className="block md:hidden">
-                        <label htmlFor="madhhab-filter-mobile" className="flex items-center gap-1.5 text-xs font-bold uppercase text-slate-500 mb-2">
-                            <FiFilter /> Filter by Madhhab:
-                        </label>
-                        <div className="relative">
-                            <select
-                                id="madhhab-filter-mobile"
-                                value={selectedMadhhab}
-                                onChange={(e) => setSelectedMadhhab(e.target.value)}
-                                className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 py-3.5 pl-4 pr-10 text-sm font-bold text-slate-900 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-sm cursor-pointer"
-                            >
-                                {MADHHABS.map((m) => (
-                                    <option key={m} value={m}>
-                                        {m} ({countsByMadhhab[m] || 0})
-                                    </option>
-                                ))}
-                            </select>
-                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
-                                <span className="material-symbols-outlined text-xl">expand_more</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Desktop Madhhab Filter Pills */}
-                    <div className="hidden md:flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+                    {/* Filter Pills and Videos Toggle */}
+                    <div className="flex flex-wrap items-center gap-2 pb-1">
                         <div className="flex items-center gap-1.5 text-xs font-bold uppercase text-slate-400 mr-1 shrink-0">
                             <FiFilter /> Filter:
                         </div>
-                        {MADHHABS.map((madhhab) => {
-                            const isSelected = selectedMadhhab === madhhab;
-                            const count = countsByMadhhab[madhhab] || 0;
-                            return (
-                                <button
-                                    key={madhhab}
-                                    onClick={() => setSelectedMadhhab(madhhab)}
-                                    className={`shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-                                        isSelected
-                                            ? 'bg-primary text-white shadow-lg shadow-primary/25 scale-[1.02]'
-                                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-transparent'
-                                    }`}
-                                >
-                                    <span>{madhhab}</span>
-                                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${isSelected ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-600'}`}>
-                                        {count}
-                                    </span>
-                                </button>
-                            );
-                        })}
+
+                        {/* Madhhab Pills (Scrollable) */}
+                        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+                            {MADHHABS.map((madhhab) => {
+                                const isSelected = selectedMadhhab === madhhab && !videosOnly;
+                                const count = countsByMadhhab[madhhab] || 0;
+                                return (
+                                    <button
+                                        key={madhhab}
+                                        onClick={() => { setSelectedMadhhab(madhhab); setVideosOnly(false); }}
+                                        className={`shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+                                            isSelected
+                                                ? 'bg-primary text-white shadow-lg shadow-primary/25 scale-[1.02]'
+                                                : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-transparent'
+                                        }`}
+                                    >
+                                        <span>{madhhab}</span>
+                                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${isSelected ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-600'}`}>
+                                            {count}
+                                        </span>
+                                    </button>
+                                );
+                            })}
+
+                            {/* Videos Only Filter Pill */}
+                            <button
+                                onClick={() => setVideosOnly(!videosOnly)}
+                                className={`shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+                                    videosOnly
+                                        ? 'bg-rose-600 text-white shadow-lg shadow-rose-600/25 scale-[1.02]'
+                                        : 'bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200'
+                                }`}
+                                title="Show rulings that have published video explanations"
+                            >
+                                <span>▶ With Video</span>
+                                <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${videosOnly ? 'bg-white/20 text-white' : 'bg-rose-200 text-rose-800'}`}>
+                                    {totalVideosCount}
+                                </span>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -157,16 +163,18 @@ const QAFeed = ({ limit }) => {
                         <span className="material-symbols-outlined text-5xl text-slate-300 mb-3">menu_book</span>
                         <h3 className="text-lg font-bold text-slate-800 mb-1">No mas'alas found</h3>
                         <p className="text-sm text-slate-500 max-w-md mx-auto mb-6">
-                            {selectedMadhhab !== 'All' 
-                                ? `There are currently no published rulings under the ${selectedMadhhab} Madhhab matching your search.` 
-                                : 'No published rulings match your query.'}
+                            {videosOnly
+                                ? 'No rulings currently have video explanations under this selection.'
+                                : selectedMadhhab !== 'All' 
+                                    ? `There are currently no published rulings under the ${selectedMadhhab} Madhhab matching your search.` 
+                                    : 'No published rulings match your query.'}
                         </p>
-                        {(selectedMadhhab !== 'All' || searchTerm) && (
+                        {(selectedMadhhab !== 'All' || searchTerm || videosOnly) && (
                             <button
-                                onClick={() => { setSelectedMadhhab('All'); setSearchTerm(''); }}
+                                onClick={() => { setSelectedMadhhab('All'); setVideosOnly(false); setSearchTerm(''); }}
                                 className="px-5 py-2.5 rounded-xl bg-primary text-white text-sm font-bold shadow-md hover:bg-primary/90 transition-all cursor-pointer"
                             >
-                                Show All Madhhabs
+                                Show All Mas'alas
                             </button>
                         )}
                     </div>
@@ -182,7 +190,7 @@ const QAFeed = ({ limit }) => {
                                             </span>
                                             {q.hasVideo && (
                                                 <span className="inline-flex items-center gap-1 rounded-lg bg-rose-50 border border-rose-200 px-2 py-0.5 text-[10px] font-bold text-rose-600">
-                                                    <span>â–¶</span> Video
+                                                    <span>▶</span> Video
                                                 </span>
                                             )}
                                         </div>
@@ -201,9 +209,22 @@ const QAFeed = ({ limit }) => {
                                         <p className="text-sm sm:text-base leading-relaxed text-slate-600 line-clamp-3 break-words font-rahna22 mb-4">
                                             {q.answerText}
                                         </p>
-                                        <Link to={`/masala/${q._id}`} className="inline-flex items-center gap-1 text-xs sm:text-sm font-bold text-primary hover:text-secondary transition-colors">
-                                            Read Full Mas'ala <span>&rarr;</span>
-                                        </Link>
+
+                                        <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
+                                            <Link to={`/masala/${q._id}`} className="inline-flex items-center gap-1 text-xs sm:text-sm font-bold text-primary hover:text-secondary transition-colors">
+                                                Read Full Mas'ala <span>&rarr;</span>
+                                            </Link>
+
+                                            {q.hasVideo && (
+                                                <button
+                                                    onClick={() => setActiveVideoModal(q)}
+                                                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95"
+                                                    title="Watch video explanation"
+                                                >
+                                                    <span>▶</span> Watch
+                                                </button>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -214,14 +235,71 @@ const QAFeed = ({ limit }) => {
                 {limit && filteredQuestions.length > 0 && (
                     <div className="mt-12 text-center">
                         <Link to="/masalas" className="inline-flex items-center justify-center rounded-xl border-2 border-primary/20 bg-white px-8 py-3.5 text-sm font-bold text-primary hover:bg-primary hover:text-white shadow-sm transition-all hover:scale-105 active:scale-95">
-                            Browse All in Archive â†’
+                            Browse All in Archive &rarr;
                         </Link>
                     </div>
                 )}
             </div>
+
+            {/* Lightbox Video Modal for watching directly from Feed */}
+            {activeVideoModal && (
+                <div
+                    className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[120] flex items-center justify-center p-4 animate-in fade-in duration-200"
+                    onClick={() => setActiveVideoModal(null)}
+                >
+                    <div
+                        className="bg-white rounded-3xl w-full max-w-3xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="p-4 sm:p-5 flex items-center justify-between border-b border-slate-100 bg-slate-50">
+                            <div className="flex items-center gap-2">
+                                <span className="size-8 rounded-lg bg-rose-600 text-white flex items-center justify-center font-bold text-xs">
+                                    ▶
+                                </span>
+                                <div>
+                                    <h3 className="font-bold text-sm sm:text-base text-slate-900 line-clamp-1">
+                                        Video Explanation / വീഡിയോ വിവരണം
+                                    </h3>
+                                    <p className="text-[11px] text-slate-500">{activeVideoModal.madhhab} Fiqh</p>
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => setActiveVideoModal(null)}
+                                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-200 transition-colors"
+                            >
+                                <FiX size={20} />
+                            </button>
+                        </div>
+
+                        <div className="p-4 sm:p-6 space-y-4">
+                            <p className="text-xs sm:text-sm font-medium italic text-slate-700 font-rahna22 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                "{activeVideoModal.questionText}"
+                            </p>
+
+                            <VideoPlayer
+                                videoUrl={activeVideoModal.videoUrl}
+                                title={`Video Explanation: ${activeVideoModal.questionText}`}
+                            />
+
+                            <div className="flex items-center justify-between gap-3 pt-2">
+                                <span className="text-xs text-slate-400">
+                                    Published: {new Date(activeVideoModal.createdAt).toLocaleDateString()}
+                                </span>
+                                <Link
+                                    to={`/masala/${activeVideoModal._id}`}
+                                    onClick={() => setActiveVideoModal(null)}
+                                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary/90 transition-all shadow-md"
+                                >
+                                    <span>Read Complete Mas'ala & Discussion</span>
+                                    <span>&rarr;</span>
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </section>
     );
 };
 
 export default QAFeed;
-

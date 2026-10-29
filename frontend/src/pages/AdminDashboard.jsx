@@ -41,6 +41,9 @@ const AdminDashboard = () => {
     const [filterVideo, setFilterVideo] = useState('All');
     const [filterDownloaded, setFilterDownloaded] = useState('All');
 
+    // Multi-Selection State for bulk operations
+    const [selectedIds, setSelectedIds] = useState([]);
+
     // Pagination
     const [rowsPerPage, setRowsPerPage] = useState(() => {
         const saved = localStorage.getItem('fiqh_rows_per_page');
@@ -169,6 +172,7 @@ const AdminDashboard = () => {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setQuestions(prev => prev.filter(q => q._id !== id));
+            setSelectedIds(prev => prev.filter(item => item !== id));
             if (selectedQuestion?._id === id) setSelectedQuestion(null);
         } catch (error) {
             console.error('Error deleting:', error);
@@ -233,7 +237,7 @@ const AdminDashboard = () => {
         }
     };
 
-    // Bulk Export with automatic status tracking
+    // Bulk Export of ALL filtered questions
     const handleExportBulk = async () => {
         if (filteredQuestions.length === 0) return;
         try {
@@ -253,6 +257,56 @@ const AdminDashboard = () => {
         } catch (error) {
             console.error('Error bulk tracking download:', error);
         }
+    };
+
+    // Bulk Export of specifically SELECTED questions
+    const handleExportSelected = async () => {
+        if (selectedIds.length === 0) return;
+        const selectedList = questions.filter(q => selectedIds.includes(q._id));
+        try {
+            await exportQuestionsListToDoc(
+                selectedList,
+                `Fiqh File - Selected Mas'alas Export (${selectedList.length} Records)`
+            );
+
+            // Mark all selected IDs as downloaded
+            const token = localStorage.getItem('adminToken');
+            await axios.post(
+                `${API_BASE_URL}/admin/questions/mark-downloaded`,
+                { ids: selectedIds },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            const now = new Date().toISOString();
+            setQuestions(prev => prev.map(q => selectedIds.includes(q._id) ? { ...q, isDownloaded: true, downloadedAt: now } : q));
+        } catch (error) {
+            console.error('Error exporting selected questions:', error);
+            alert('Failed to export selected questions.');
+        }
+    };
+
+    // Toggle individual selection
+    const toggleSelectQuestion = (id) => {
+        setSelectedIds(prev =>
+            prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
+        );
+    };
+
+    // Select or deselect all questions visible on current page
+    const handleSelectAllPage = () => {
+        const pageIds = paginatedQuestions.map(q => q._id);
+        const allPageSelected = pageIds.length > 0 && pageIds.every(id => selectedIds.includes(id));
+        if (allPageSelected) {
+            setSelectedIds(prev => prev.filter(id => !pageIds.includes(id)));
+        } else {
+            setSelectedIds(prev => Array.from(new Set([...prev, ...pageIds])));
+        }
+    };
+
+    // Select all filtered questions across all pages
+    const handleSelectAllFiltered = () => {
+        const filteredIds = filteredQuestions.map(q => q._id);
+        setSelectedIds(filteredIds);
     };
 
     const handleCreateQuestion = async (e) => {
@@ -448,7 +502,7 @@ const AdminDashboard = () => {
                                         {manageHasVideo && (
                                             <div>
                                                 <label className="block text-[11px] font-bold uppercase text-slate-500 mb-1">
-                                                    Video URL (YouTube, Facebook, etc.)
+                                                    Video URL (YouTube, Vimeo, etc.)
                                                 </label>
                                                 <input
                                                     type="url"
@@ -614,26 +668,26 @@ const AdminDashboard = () => {
                     </div>
                 </header>
 
-                <div className="p-4 md:p-8 space-y-6">
+                <div className="p-4 md:p-8 space-y-5">
                     {/* View: Questions */}
                     {activeTab === 'questions' && (
-                        <div className="space-y-6 animate-in fade-in duration-300">
+                        <div className="space-y-4 animate-in fade-in duration-300">
                             {/* Top Title & Primary Actions */}
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                 <div>
                                     <h1 className="text-2xl md:text-3xl font-black tracking-tight text-slate-900">Questions</h1>
                                     <p className="text-slate-500 text-sm">
-                                        Reviewing submissions, managing video attachments, and tracking document exports.
+                                        Select required questions to export in bulk, attach video links, and manage rulings.
                                     </p>
                                 </div>
-                                <div className="flex items-center gap-3 flex-wrap">
+                                <div className="flex items-center gap-2.5 flex-wrap">
                                     <button
                                         onClick={handleExportBulk}
                                         disabled={filteredQuestions.length === 0}
-                                        className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md disabled:opacity-50 transition-all cursor-pointer"
-                                        title="Download all filtered questions as a formatted Word Doc file and mark them as downloaded"
+                                        className="flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-4 py-2.5 rounded-xl font-bold text-xs shadow-md disabled:opacity-50 transition-all cursor-pointer"
+                                        title="Download ALL filtered questions as Word Doc (.docx)"
                                     >
-                                        <FiDownload size={15} /> Download Doc ({filteredQuestions.length})
+                                        <FiDownload size={14} /> Export All ({filteredQuestions.length})
                                     </button>
                                     <button
                                         onClick={() => setShowNewModal(true)}
@@ -643,6 +697,46 @@ const AdminDashboard = () => {
                                     </button>
                                 </div>
                             </div>
+
+                            {/* Bulk Selection Action Bar (Visible when any questions are selected) */}
+                            {selectedIds.length > 0 && (
+                                <div className="bg-primary/5 border-2 border-primary/30 p-4 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm animate-in fade-in slide-in-from-top-2 duration-200">
+                                    <div className="flex items-center gap-3">
+                                        <div className="size-9 rounded-xl bg-primary text-white flex items-center justify-center font-black text-sm shadow-md">
+                                            {selectedIds.length}
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-black text-slate-900">
+                                                {selectedIds.length} {selectedIds.length === 1 ? 'question' : 'questions'} selected
+                                            </p>
+                                            <p className="text-xs text-slate-500">
+                                                You can download these specific selected questions as a Word Doc file now.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-2.5 flex-wrap">
+                                        <button
+                                            onClick={handleSelectAllFiltered}
+                                            className="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 cursor-pointer shadow-sm"
+                                        >
+                                            Select All Filtered ({filteredQuestions.length})
+                                        </button>
+                                        <button
+                                            onClick={() => setSelectedIds([])}
+                                            className="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-200/50 cursor-pointer"
+                                        >
+                                            Clear Selection
+                                        </button>
+                                        <button
+                                            onClick={handleExportSelected}
+                                            className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-black text-xs shadow-lg shadow-emerald-600/20 transition-all cursor-pointer hover:scale-105 active:scale-95"
+                                        >
+                                            <FiDownload size={15} /> Download Selected Doc ({selectedIds.length})
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
 
                             {/* Filter and Control Bar */}
                             <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
@@ -753,10 +847,20 @@ const AdminDashboard = () => {
                             {/* Questions Table */}
                             <div className="bg-white rounded-2xl md:rounded-3xl border border-slate-200 shadow-xl overflow-hidden">
                                 <div className="overflow-x-auto">
-                                    <table className="w-full text-left min-w-[850px]">
+                                    <table className="w-full text-left min-w-[900px]">
                                         <thead className="bg-slate-50/75 border-b border-slate-200">
                                             <tr className="text-[10px] font-black uppercase text-slate-400 tracking-wider">
-                                                <th className="px-6 py-4">Profile</th>
+                                                {/* Select All Checkbox Column */}
+                                                <th className="w-12 px-4 py-4 text-center">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={paginatedQuestions.length > 0 && paginatedQuestions.every(q => selectedIds.includes(q._id))}
+                                                        onChange={handleSelectAllPage}
+                                                        className="size-4 text-primary rounded border-slate-300 focus:ring-primary cursor-pointer accent-primary"
+                                                        title="Select or deselect all on this page"
+                                                    />
+                                                </th>
+                                                <th className="px-5 py-4">Profile</th>
                                                 <th className="px-6 py-4">Content</th>
                                                 <th className="px-4 py-4">Madhhab</th>
                                                 <th className="px-4 py-4">Status & Indicators</th>
@@ -766,13 +870,13 @@ const AdminDashboard = () => {
                                         <tbody className="divide-y divide-slate-100">
                                             {isLoading ? (
                                                 <tr>
-                                                    <td colSpan="5" className="py-20 text-center text-slate-400 font-bold animate-pulse">
+                                                    <td colSpan="6" className="py-20 text-center text-slate-400 font-bold animate-pulse">
                                                         Fetching Data from Cloud MySQL...
                                                     </td>
                                                 </tr>
                                             ) : paginatedQuestions.length === 0 ? (
                                                 <tr>
-                                                    <td colSpan="5" className="py-16 text-center text-slate-400">
+                                                    <td colSpan="6" className="py-16 text-center text-slate-400">
                                                         <span className="material-symbols-outlined text-4xl text-slate-300 block mb-2">search_off</span>
                                                         <p className="font-bold text-sm">No questions found matching your criteria.</p>
                                                         <button
@@ -790,145 +894,165 @@ const AdminDashboard = () => {
                                                     </td>
                                                 </tr>
                                             ) : (
-                                                paginatedQuestions.map(q => (
-                                                    <tr key={q._id} className="hover:bg-slate-50/70 transition-colors">
-                                                        {/* Profile Column */}
-                                                        <td className="px-6 py-4 align-top">
-                                                            <div className="flex items-center gap-3">
-                                                                <div className="size-9 bg-primary/10 rounded-xl flex items-center justify-center text-primary text-xs font-black uppercase shrink-0">
-                                                                    {getInitials(q.name)}
-                                                                </div>
-                                                                <div className="min-w-0">
-                                                                    <p className="text-xs md:text-sm font-bold text-slate-900 truncate">
-                                                                        {q.name}
-                                                                    </p>
-                                                                    <p className="text-[10px] text-slate-400 font-medium">
-                                                                        {q.phone}
-                                                                    </p>
-                                                                    <p className="text-[9px] text-slate-400 font-medium">
-                                                                        {new Date(q.createdAt).toLocaleDateString()}
-                                                                    </p>
-                                                                </div>
-                                                            </div>
-                                                        </td>
+                                                paginatedQuestions.map(q => {
+                                                    const isRowSelected = selectedIds.includes(q._id);
+                                                    return (
+                                                        <tr
+                                                            key={q._id}
+                                                            className={`transition-colors ${
+                                                                isRowSelected
+                                                                    ? 'bg-primary/5 hover:bg-primary/10'
+                                                                    : 'hover:bg-slate-50/70'
+                                                            }`}
+                                                        >
+                                                            {/* Checkbox Column */}
+                                                            <td className="w-12 px-4 py-4 text-center align-middle">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={isRowSelected}
+                                                                    onChange={() => toggleSelectQuestion(q._id)}
+                                                                    className="size-4 text-primary rounded border-slate-300 focus:ring-primary cursor-pointer accent-primary"
+                                                                />
+                                                            </td>
 
-                                                        {/* Content Column */}
-                                                        <td className="px-6 py-4 max-w-xs md:max-w-sm align-top">
-                                                            <p className="text-xs md:text-sm font-medium line-clamp-2 leading-relaxed text-slate-700 font-rahna22">
-                                                                "{q.questionText}"
-                                                            </p>
-                                                            {q.answerText && (
-                                                                <p className="text-[11px] font-medium text-emerald-700 line-clamp-1 mt-1 font-rahna22">
-                                                                    <span className="font-bold font-sans text-[10px] uppercase text-emerald-600 mr-1">Ans:</span>
-                                                                    {q.answerText}
+                                                            {/* Profile Column */}
+                                                            <td className="px-5 py-4 align-top">
+                                                                <div className="flex items-center gap-3">
+                                                                    <div className="size-9 bg-primary/10 rounded-xl flex items-center justify-center text-primary text-xs font-black uppercase shrink-0">
+                                                                        {getInitials(q.name)}
+                                                                    </div>
+                                                                    <div className="min-w-0">
+                                                                        <p className="text-xs md:text-sm font-bold text-slate-900 truncate">
+                                                                            {q.name}
+                                                                        </p>
+                                                                        <p className="text-[10px] text-slate-400 font-medium">
+                                                                            {q.phone}
+                                                                        </p>
+                                                                        <p className="text-[9px] text-slate-400 font-medium">
+                                                                            {new Date(q.createdAt).toLocaleDateString()}
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+
+                                                            {/* Content Column */}
+                                                            <td className="px-6 py-4 max-w-xs md:max-w-sm align-top">
+                                                                <p className="text-xs md:text-sm font-medium line-clamp-2 leading-relaxed text-slate-700 font-rahna22">
+                                                                    "{q.questionText}"
                                                                 </p>
-                                                            )}
-                                                        </td>
+                                                                {q.answerText && (
+                                                                    <p className="text-[11px] font-medium text-emerald-700 line-clamp-1 mt-1 font-rahna22">
+                                                                        <span className="font-bold font-sans text-[10px] uppercase text-emerald-600 mr-1">Ans:</span>
+                                                                        {q.answerText}
+                                                                    </p>
+                                                                )}
+                                                            </td>
 
-                                                        {/* Madhhab Column */}
-                                                        <td className="px-4 py-4 align-top">
-                                                            <span className="text-[9px] md:text-[10px] font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full uppercase whitespace-nowrap">
-                                                                {q.madhhab}
-                                                            </span>
-                                                        </td>
+                                                            {/* Madhhab Column */}
+                                                            <td className="px-4 py-4 align-top">
+                                                                <span className="text-[9px] md:text-[10px] font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full uppercase whitespace-nowrap">
+                                                                    {q.madhhab}
+                                                                </span>
+                                                            </td>
 
-                                                        {/* Status & Badges Column */}
-                                                        <td className="px-4 py-4 align-top">
-                                                            <div className="flex flex-col gap-1.5 items-start">
-                                                                <div className="flex items-center gap-1.5">
-                                                                    <span className={`text-[9px] md:text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full ${
-                                                                        q.status === 'Answered'
-                                                                            ? 'bg-emerald-100 text-emerald-700'
-                                                                            : 'bg-amber-100 text-amber-700'
-                                                                    }`}>
-                                                                        {q.status}
-                                                                    </span>
-                                                                    {q.isUrgent && (
-                                                                        <span className="size-2 bg-red-500 rounded-full animate-ping" title="Urgent Priority"></span>
+                                                            {/* Status & Badges Column */}
+                                                            <td className="px-4 py-4 align-top">
+                                                                <div className="flex flex-col gap-1.5 items-start">
+                                                                    <div className="flex items-center gap-1.5">
+                                                                        <span className={`text-[9px] md:text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full ${
+                                                                            q.status === 'Answered'
+                                                                                ? 'bg-emerald-100 text-emerald-700'
+                                                                                : 'bg-amber-100 text-amber-700'
+                                                                        }`}>
+                                                                            {q.status}
+                                                                        </span>
+                                                                        {q.isUrgent && (
+                                                                            <span className="size-2 bg-red-500 rounded-full animate-ping" title="Urgent Priority"></span>
+                                                                        )}
+                                                                    </div>
+
+                                                                    {/* Video Badge */}
+                                                                    {q.hasVideo && (
+                                                                        <button
+                                                                            onClick={() => openVideoModal(q)}
+                                                                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 transition-colors cursor-pointer"
+                                                                            title={q.videoUrl ? `Video URL: ${q.videoUrl} (Click to edit)` : "Marked with published video (Click to edit)"}
+                                                                        >
+                                                                            <span>▶</span> Video Published
+                                                                        </button>
+                                                                    )}
+
+                                                                    {/* Doc Downloaded Badge */}
+                                                                    {q.isDownloaded && (
+                                                                        <span
+                                                                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200"
+                                                                            title={q.downloadedAt ? `Downloaded on ${new Date(q.downloadedAt).toLocaleString()}` : "Document file downloaded"}
+                                                                        >
+                                                                            <FiCheck size={10} /> Doc Exported
+                                                                        </span>
                                                                     )}
                                                                 </div>
+                                                            </td>
 
-                                                                {/* Video Badge */}
-                                                                {q.hasVideo && (
+                                                            {/* Actions Column (Always Visible) */}
+                                                            <td className="px-6 py-4 align-top text-right">
+                                                                <div className="flex items-center justify-end gap-1.5 md:gap-2">
+                                                                    {/* Video published toggle / edit button */}
                                                                     <button
                                                                         onClick={() => openVideoModal(q)}
-                                                                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 transition-colors cursor-pointer"
-                                                                        title={q.videoUrl ? `Video URL: ${q.videoUrl} (Click to edit)` : "Marked with published video (Click to edit)"}
+                                                                        title={q.hasVideo ? (q.videoUrl ? `Video: ${q.videoUrl} (Click to edit)` : "Video Published (Click to edit)") : "Attach / Mark published video"}
+                                                                        className={`p-1.5 md:p-2 transition-all rounded-lg border shadow-sm cursor-pointer ${
+                                                                            q.hasVideo
+                                                                                ? 'bg-rose-50 border-rose-200 text-rose-600 hover:bg-rose-100 hover:scale-105'
+                                                                                : 'bg-white border-slate-200 text-slate-400 hover:text-rose-600 hover:border-rose-200'
+                                                                        }`}
                                                                     >
-                                                                        <span>▶</span> Video Published
+                                                                        <FiVideo size={14} />
                                                                     </button>
-                                                                )}
 
-                                                                {/* Doc Downloaded Badge */}
-                                                                {q.isDownloaded && (
-                                                                    <span
-                                                                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200"
-                                                                        title={q.downloadedAt ? `Downloaded on ${new Date(q.downloadedAt).toLocaleString()}` : "Document file downloaded"}
+                                                                    {/* Doc download button */}
+                                                                    <button
+                                                                        onClick={() => handleExportSingle(q)}
+                                                                        title={q.isDownloaded ? `Downloaded on ${q.downloadedAt ? new Date(q.downloadedAt).toLocaleDateString() : 'earlier'} (Click to download again)` : "Download as Word Doc (.docx)"}
+                                                                        className={`p-1.5 md:p-2 transition-all rounded-lg border shadow-sm cursor-pointer ${
+                                                                            q.isDownloaded
+                                                                                ? 'bg-emerald-50 border-emerald-300 text-emerald-700 hover:bg-emerald-100 hover:scale-105'
+                                                                                : 'bg-white border-slate-200 text-slate-400 hover:text-emerald-600 hover:border-emerald-200'
+                                                                        }`}
                                                                     >
-                                                                        <FiCheck size={10} /> Doc Exported
-                                                                    </span>
-                                                                )}
-                                                            </div>
-                                                        </td>
+                                                                        <FiDownload size={14} />
+                                                                    </button>
 
-                                                        {/* Actions Column (Always Visible) */}
-                                                        <td className="px-6 py-4 align-top text-right">
-                                                            <div className="flex items-center justify-end gap-1.5 md:gap-2">
-                                                                {/* Video published toggle / edit button */}
-                                                                <button
-                                                                    onClick={() => openVideoModal(q)}
-                                                                    title={q.hasVideo ? (q.videoUrl ? `Video: ${q.videoUrl} (Click to edit)` : "Video Published (Click to edit)") : "Attach / Mark published video"}
-                                                                    className={`p-1.5 md:p-2 transition-all rounded-lg border shadow-sm cursor-pointer ${
-                                                                        q.hasVideo
-                                                                            ? 'bg-rose-50 border-rose-200 text-rose-600 hover:bg-rose-100 hover:scale-105'
-                                                                            : 'bg-white border-slate-200 text-slate-400 hover:text-rose-600 hover:border-rose-200'
-                                                                    }`}
-                                                                >
-                                                                    <FiVideo size={14} />
-                                                                </button>
+                                                                    {/* Public View link */}
+                                                                    <button
+                                                                        onClick={() => navigate(`/masala/${q._id}`)}
+                                                                        title="View Public Mas'ala Page"
+                                                                        className="p-1.5 md:p-2 text-slate-400 hover:text-primary transition-colors bg-white border border-slate-200 rounded-lg shadow-sm cursor-pointer hover:border-primary/30"
+                                                                    >
+                                                                        <FiExternalLink size={14} />
+                                                                    </button>
 
-                                                                {/* Doc download button */}
-                                                                <button
-                                                                    onClick={() => handleExportSingle(q)}
-                                                                    title={q.isDownloaded ? `Downloaded on ${q.downloadedAt ? new Date(q.downloadedAt).toLocaleDateString() : 'earlier'} (Click to download again)` : "Download as Word Doc (.docx)"}
-                                                                    className={`p-1.5 md:p-2 transition-all rounded-lg border shadow-sm cursor-pointer ${
-                                                                        q.isDownloaded
-                                                                            ? 'bg-emerald-50 border-emerald-300 text-emerald-700 hover:bg-emerald-100 hover:scale-105'
-                                                                            : 'bg-white border-slate-200 text-slate-400 hover:text-emerald-600 hover:border-emerald-200'
-                                                                    }`}
-                                                                >
-                                                                    <FiDownload size={14} />
-                                                                </button>
+                                                                    {/* Manage Button */}
+                                                                    <button
+                                                                        onClick={() => openManageView(q)}
+                                                                        className="bg-slate-900 text-white text-[10px] md:text-xs px-3 md:px-3.5 py-1.5 md:py-2 rounded-lg font-black uppercase tracking-wider hover:bg-primary transition-all shadow-md cursor-pointer hover:scale-105 active:scale-95 whitespace-nowrap"
+                                                                    >
+                                                                        Manage
+                                                                    </button>
 
-                                                                {/* Public View link */}
-                                                                <button
-                                                                    onClick={() => navigate(`/masala/${q._id}`)}
-                                                                    title="View Public Mas'ala Page"
-                                                                    className="p-1.5 md:p-2 text-slate-400 hover:text-primary transition-colors bg-white border border-slate-200 rounded-lg shadow-sm cursor-pointer hover:border-primary/30"
-                                                                >
-                                                                    <FiExternalLink size={14} />
-                                                                </button>
-
-                                                                {/* Manage Button */}
-                                                                <button
-                                                                    onClick={() => openManageView(q)}
-                                                                    className="bg-slate-900 text-white text-[10px] md:text-xs px-3 md:px-3.5 py-1.5 md:py-2 rounded-lg font-black uppercase tracking-wider hover:bg-primary transition-all shadow-md cursor-pointer hover:scale-105 active:scale-95 whitespace-nowrap"
-                                                                >
-                                                                    Manage
-                                                                </button>
-
-                                                                {/* Delete Button */}
-                                                                <button
-                                                                    onClick={() => handleDelete(q._id)}
-                                                                    title="Delete record"
-                                                                    className="p-1.5 md:p-2 text-slate-300 hover:text-red-500 transition-colors bg-white border border-slate-200 rounded-lg shadow-sm cursor-pointer hover:border-red-200"
-                                                                >
-                                                                    <FiTrash2 size={14} />
-                                                                </button>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                ))
+                                                                    {/* Delete Button */}
+                                                                    <button
+                                                                        onClick={() => handleDelete(q._id)}
+                                                                        title="Delete record"
+                                                                        className="p-1.5 md:p-2 text-slate-300 hover:text-red-500 transition-colors bg-white border border-slate-200 rounded-lg shadow-sm cursor-pointer hover:border-red-200"
+                                                                    >
+                                                                        <FiTrash2 size={14} />
+                                                                    </button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                })
                                             )}
                                         </tbody>
                                     </table>
@@ -940,6 +1064,9 @@ const AdminDashboard = () => {
                                         Showing <span className="font-bold text-slate-800">{filteredQuestions.length === 0 ? 0 : startIndex + 1}</span> to{' '}
                                         <span className="font-bold text-slate-800">{endIndex}</span> of{' '}
                                         <span className="font-bold text-slate-800">{filteredQuestions.length}</span> questions
+                                        {selectedIds.length > 0 && (
+                                            <span className="ml-2 font-bold text-primary">({selectedIds.length} selected)</span>
+                                        )}
                                     </div>
 
                                     <div className="flex items-center gap-1.5">
@@ -1228,7 +1355,7 @@ const AdminDashboard = () => {
                                     type="url"
                                     value={videoModalUrl}
                                     onChange={(e) => setVideoModalUrl(e.target.value)}
-                                    placeholder="https://youtube.com/watch?v=... or https://fb.watch/..."
+                                    placeholder="https://youtube.com/watch?v=... or https://youtu.be/..."
                                     className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs outline-none focus:ring-2 focus:ring-rose-300 transition-all"
                                 />
                             </div>

@@ -3,10 +3,10 @@ import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import Header from '../components/Header';
 import { useForm } from 'react-hook-form';
-import { FaArrowLeft, FaUserCircle } from 'react-icons/fa';
 import { API_BASE_URL } from '../config';
 import { clientCache } from '../utils/clientCache';
 import { exportSingleQuestionToDoc } from '../utils/docxExport';
+import VideoPlayer from '../components/VideoPlayer';
 
 const FatwaDetail = () => {
     const { id } = useParams();
@@ -75,7 +75,7 @@ const FatwaDetail = () => {
     }
 
     return (
-        <div className="relative flex min-h-screen flex-col">
+        <div className="min-h-screen bg-slate-50 flex flex-col">
             <Header />
 
             <main className="flex-1 py-12 px-4 sm:px-6 lg:px-8">
@@ -90,10 +90,15 @@ const FatwaDetail = () => {
                     <div className="bg-white rounded-3xl shadow-xl shadow-primary/5 overflow-hidden mb-12 border border-primary/10">
                         {/* Header details */}
                         <div className="bg-background-light border-b border-primary/10 px-6 sm:px-8 py-5 flex flex-wrap justify-between items-center gap-4">
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-2.5 flex-wrap">
                                 <span className="inline-flex items-center rounded-md bg-primary/20 px-3 py-1 text-sm font-bold text-primary uppercase">
                                     {fatwa.madhhab} Fiqh
                                 </span>
+                                {fatwa.hasVideo && (
+                                    <span className="inline-flex items-center gap-1.5 rounded-md bg-rose-100 text-rose-700 px-3 py-1 text-xs font-black uppercase tracking-wider border border-rose-200">
+                                        <span>▶</span> Video Available
+                                    </span>
+                                )}
                             </div>
                             <div className="flex items-center gap-3 flex-wrap">
                                 <span className="text-slate-400 text-sm font-medium flex items-center gap-2">
@@ -134,29 +139,19 @@ const FatwaDetail = () => {
                                 </div>
                             </div>
 
-                            {/* Video Explanation Card if available */}
+                            {/* Published Video Explanation Section */}
                             {fatwa.hasVideo && (
-                                <div className="mt-8 p-5 sm:p-6 bg-rose-50/70 border border-rose-200 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className="size-10 rounded-xl bg-rose-600 text-white flex items-center justify-center font-bold text-lg shadow-md shrink-0">
-                                            ▶
-                                        </div>
+                                <div className="mt-10 pt-8 border-t border-slate-200/80">
+                                    <div className="flex items-center gap-2.5 mb-4">
+                                        <span className="material-symbols-outlined text-rose-600 text-2xl">smart_display</span>
                                         <div>
-                                            <h4 className="font-bold text-slate-900 text-sm sm:text-base">Published Video Explanation</h4>
-                                            <p className="text-xs text-slate-500">A detailed video ruling or discussion is available for this mas'ala.</p>
+                                            <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
+                                                Published Video Explanation / വീഡിയോ വിവരണം
+                                            </h3>
+                                            <p className="text-xs text-slate-500">Official video presentation and explanation for this ruling.</p>
                                         </div>
                                     </div>
-                                    {fatwa.videoUrl && (
-                                        <a
-                                            href={fatwa.videoUrl}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="inline-flex items-center justify-center gap-2 bg-rose-600 hover:bg-rose-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-md transition-all shrink-0 cursor-pointer"
-                                        >
-                                            <span>Watch Video</span>
-                                            <span className="material-symbols-outlined text-sm">open_in_new</span>
-                                        </a>
-                                    )}
+                                    <VideoPlayer videoUrl={fatwa.videoUrl} title={`Video Explanation: ${fatwa.questionText}`} />
                                 </div>
                             )}
                         </div>
@@ -174,55 +169,57 @@ const FatwaDetail = () => {
                                     <label className="sr-only">Name</label>
                                     <input
                                         type="text"
-                                        {...register('name', { required: 'Name is required' })}
                                         placeholder="Your Name"
-                                        className="block w-full rounded-xl border border-slate-200 px-4 py-3.5 text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white transition-all text-sm outline-none shadow-sm"
+                                        {...register("name", { required: true })}
+                                        className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 bg-white"
                                     />
-                                    {errors.name && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.name.message}</p>}
+                                    {errors.name && <span className="text-red-500 text-xs mt-1 block">Name is required</span>}
                                 </div>
                                 <div>
                                     <label className="sr-only">Comment</label>
                                     <textarea
                                         rows="3"
-                                        {...register('text', { required: 'Comment cannot be empty' })}
-                                        placeholder="Share your respectful thoughts or clarifications..."
-                                        className="block w-full rounded-xl border border-slate-200 p-4 text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white transition-all text-sm outline-none shadow-sm resize-y leading-relaxed font-rahna22"
+                                        placeholder="Add your respectful reflection..."
+                                        {...register("text", { required: true })}
+                                        className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 bg-white font-rahna22"
                                     ></textarea>
-                                    {errors.text && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.text.message}</p>}
+                                    {errors.text && <span className="text-red-500 text-xs mt-1 block">Comment is required</span>}
                                 </div>
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="w-full sm:w-auto rounded-xl bg-primary px-8 py-3.5 text-sm font-bold text-white shadow-lg shadow-primary/20 hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
+                                    className="bg-primary text-white px-6 py-2.5 rounded-xl font-bold hover:bg-primary/90 transition-all text-sm disabled:opacity-50"
                                 >
                                     {isSubmitting ? 'Posting...' : 'Post Comment'}
                                 </button>
                             </div>
                         </form>
 
-                        {/* Existing Comments list */}
-                        <div className="space-y-6">
-                            {(!fatwa.comments || fatwa.comments.length === 0) ? (
-                                <p className="text-slate-500 text-center py-8">No comments yet. Be the first to share your thoughts.</p>
-                            ) : (
-                                fatwa.comments.map((comment, index) => (
-                                    <div key={index} className="flex gap-4 p-4 rounded-xl hover:bg-background-light transition-colors border border-transparent hover:border-primary/5">
-                                        <div className="flex-shrink-0 mt-1">
-                                            <span className="material-symbols-outlined text-3xl text-slate-300">account_circle</span>
+                        {/* Existing Comments */}
+                        {fatwa.comments && fatwa.comments.length > 0 ? (
+                            <div className="space-y-6">
+                                {fatwa.comments.map((comment, index) => (
+                                    <div key={index} className="flex gap-4 p-4 rounded-xl bg-slate-50 border border-slate-100">
+                                        <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold shrink-0">
+                                            {comment.name ? comment.name.slice(0, 2).toUpperCase() : '??'}
                                         </div>
                                         <div>
-                                            <div className="flex items-center gap-3 mb-1">
-                                                <h5 className="font-bold text-slate-800">{comment.name}</h5>
-                                                <span className="text-xs text-slate-400">
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <h5 className="font-bold text-sm text-slate-900">{comment.name}</h5>
+                                                <span className="text-slate-400 text-xs">
                                                     {new Date(comment.createdAt).toLocaleDateString()}
                                                 </span>
                                             </div>
-                                            <p className="text-slate-700 text-base sm:text-lg leading-relaxed whitespace-pre-wrap font-rahna22">{comment.text}</p>
+                                            <p className="text-slate-700 text-sm leading-relaxed font-rahna22">
+                                                {comment.text}
+                                            </p>
                                         </div>
                                     </div>
-                                ))
-                            )}
-                        </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-slate-400 italic text-center py-6">No comments yet. Be the first to reflect.</p>
+                        )}
                     </div>
 
                 </div>
