@@ -29,6 +29,13 @@ const AdminDashboard = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [selectedQuestion, setSelectedQuestion] = useState(null);
     const [answerText, setAnswerText] = useState('');
+    const [manageQuestionText, setManageQuestionText] = useState('');
+    const [manageName, setManageName] = useState('');
+    const [managePhone, setManagePhone] = useState('');
+    const [manageMadhhab, setManageMadhhab] = useState('General / No Preference');
+    const [manageStatus, setManageStatus] = useState('Pending');
+    const [isSavingQuestionOnly, setIsSavingQuestionOnly] = useState(false);
+    const [questionSaveSuccess, setQuestionSaveSuccess] = useState(false);
     const [manageHasVideo, setManageHasVideo] = useState(false);
     const [manageVideoUrl, setManageVideoUrl] = useState('');
     const [manageIsDownloaded, setManageIsDownloaded] = useState(false);
@@ -115,10 +122,54 @@ const AdminDashboard = () => {
     // Open manage view and initialize state
     const openManageView = (q) => {
         setSelectedQuestion(q);
+        setManageQuestionText(q.questionText || '');
+        setManageName(q.name || '');
+        setManagePhone(q.phone || '');
+        setManageMadhhab(q.madhhab || 'General / No Preference');
+        setManageStatus(q.status || 'Pending');
         setAnswerText(q.answerText || '');
         setManageHasVideo(Boolean(q.hasVideo));
         setManageVideoUrl(q.videoUrl || '');
         setManageIsDownloaded(Boolean(q.isDownloaded));
+        setQuestionSaveSuccess(false);
+    };
+
+    // Save Question Details Only (allows editing question without submitting answer)
+    const handleSaveQuestionOnly = async () => {
+        if (!manageQuestionText.trim()) {
+            alert('Question text cannot be empty.');
+            return;
+        }
+        setIsSavingQuestionOnly(true);
+        setQuestionSaveSuccess(false);
+        try {
+            const token = localStorage.getItem('adminToken');
+            const res = await axios.put(
+                `${API_BASE_URL}/admin/questions/${selectedQuestion._id}`,
+                {
+                    questionText: manageQuestionText.trim(),
+                    name: manageName.trim() || selectedQuestion.name,
+                    phone: managePhone.trim() || selectedQuestion.phone,
+                    madhhab: manageMadhhab,
+                    status: manageStatus,
+                    hasVideo: manageHasVideo,
+                    videoUrl: manageVideoUrl,
+                    isDownloaded: manageIsDownloaded
+                },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            const updated = res.data;
+            setSelectedQuestion(updated);
+            setQuestions(prev => prev.map(q => q._id === selectedQuestion._id ? updated : q));
+            setQuestionSaveSuccess(true);
+            setTimeout(() => setQuestionSaveSuccess(false), 3000);
+        } catch (error) {
+            console.error('Error saving question details:', error);
+            alert('Failed to save question edits.');
+        } finally {
+            setIsSavingQuestionOnly(false);
+        }
     };
 
     // Submit answer and question updates from Manage view
@@ -129,6 +180,11 @@ const AdminDashboard = () => {
             const res = await axios.put(
                 `${API_BASE_URL}/admin/questions/${selectedQuestion._id}`,
                 {
+                    questionText: manageQuestionText.trim() || selectedQuestion.questionText,
+                    name: manageName.trim() || selectedQuestion.name,
+                    phone: managePhone.trim() || selectedQuestion.phone,
+                    madhhab: manageMadhhab,
+                    status: manageStatus,
                     answerText,
                     hasVideo: manageHasVideo,
                     videoUrl: manageVideoUrl,
@@ -449,35 +505,105 @@ const AdminDashboard = () => {
                                 </div>
                             </div>
 
-                            {/* Question Details Card */}
-                            <div className="rounded-2xl border border-primary/10 bg-white p-5 md:p-6 shadow-sm space-y-4">
-                                <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100">
+                            {/* Question Details Card (Editable) */}
+                            <div className="rounded-2xl border border-primary/20 bg-white p-5 md:p-6 shadow-sm space-y-4">
+                                <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-100">
                                     <div className="flex items-center gap-3">
-                                        <div className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold">
-                                            {getInitials(selectedQuestion.name)}
+                                        <div className="size-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-sm shrink-0">
+                                            {getInitials(manageName || selectedQuestion.name)}
                                         </div>
-                                        <div>
-                                            <p className="font-bold text-sm text-slate-900">{selectedQuestion.name}</p>
-                                            <p className="text-xs text-slate-500">{selectedQuestion.phone}</p>
+                                        <div className="space-y-1">
+                                            <input
+                                                type="text"
+                                                value={manageName}
+                                                onChange={(e) => setManageName(e.target.value)}
+                                                placeholder="Submitter Name"
+                                                className="font-bold text-sm text-slate-900 border border-slate-200 hover:border-slate-300 focus:border-primary rounded-lg px-2.5 py-1 outline-none transition-colors"
+                                                title="Edit Submitter Name"
+                                            />
+                                            <input
+                                                type="text"
+                                                value={managePhone}
+                                                onChange={(e) => setManagePhone(e.target.value)}
+                                                placeholder="Phone number"
+                                                className="text-xs text-slate-500 border border-slate-200 hover:border-slate-300 focus:border-primary rounded-lg px-2.5 py-1 outline-none transition-colors block"
+                                                title="Edit Submitter Phone"
+                                            />
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-xs font-bold bg-slate-100 text-slate-700 px-3 py-1 rounded-full uppercase">
-                                            {selectedQuestion.madhhab}
-                                        </span>
-                                        <span className={`text-xs font-bold px-3 py-1 rounded-full uppercase ${
-                                            selectedQuestion.status === 'Answered' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
-                                        }`}>
-                                            {selectedQuestion.status}
-                                        </span>
+
+                                    <div className="flex items-center gap-2.5 flex-wrap">
+                                        {/* Madhhab Selector */}
+                                        <select
+                                            value={manageMadhhab}
+                                            onChange={(e) => setManageMadhhab(e.target.value)}
+                                            className="text-xs font-bold bg-slate-100 text-slate-700 px-3 py-1.5 rounded-xl border border-slate-200 outline-none cursor-pointer hover:border-primary"
+                                            title="Edit Madhhab"
+                                        >
+                                            <option value="General / No Preference">General / No Preference</option>
+                                            <option value="Shafi'i">Shafi'i</option>
+                                            <option value="Hanafi">Hanafi</option>
+                                            <option value="Maliki">Maliki</option>
+                                            <option value="Hanbali">Hanbali</option>
+                                        </select>
+
+                                        {/* Status Selector */}
+                                        <select
+                                            value={manageStatus}
+                                            onChange={(e) => setManageStatus(e.target.value)}
+                                            className={`text-xs font-bold px-3 py-1.5 rounded-xl border outline-none cursor-pointer ${
+                                                manageStatus === 'Answered'
+                                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                                    : 'bg-amber-50 text-amber-700 border-amber-200'
+                                            }`}
+                                            title="Edit Status"
+                                        >
+                                            <option value="Pending">Pending</option>
+                                            <option value="Answered">Answered</option>
+                                        </select>
                                     </div>
                                 </div>
 
-                                <div>
-                                    <h3 className="text-xs font-bold uppercase text-slate-400 mb-2">The Question / ചോദ്യം:</h3>
-                                    <p className="italic border-l-4 border-primary pl-4 md:text-lg break-words leading-relaxed font-rahna22 text-slate-800 bg-slate-50/50 p-4 rounded-r-xl">
-                                        "{selectedQuestion.questionText}"
-                                    </p>
+                                {/* The Question Textarea (Editable) */}
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <h3 className="text-xs font-black uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
+                                            <span className="material-symbols-outlined text-sm text-primary">edit_note</span>
+                                            The Question / ചോദ്യം (Editable)
+                                        </h3>
+                                        <span className="text-[11px] text-slate-400">
+                                            You can edit or correct the question wording anytime
+                                        </span>
+                                    </div>
+
+                                    <textarea
+                                        rows="4"
+                                        value={manageQuestionText}
+                                        onChange={(e) => setManageQuestionText(e.target.value)}
+                                        placeholder="Edit question text here..."
+                                        className="w-full p-4 rounded-xl border-2 border-primary/20 bg-slate-50/50 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-base md:text-lg leading-relaxed font-rahna22 resize-y shadow-inner text-slate-900 border-l-4 border-l-primary"
+                                    />
+
+                                    <div className="flex items-center justify-between pt-1">
+                                        <div className="flex items-center gap-3">
+                                            <span className="text-[11px] text-slate-400">
+                                                {manageQuestionText.length} characters
+                                            </span>
+                                            {questionSaveSuccess && (
+                                                <span className="text-xs font-bold text-emerald-600 flex items-center gap-1 animate-in fade-in">
+                                                    <FiCheck /> Question updated successfully!
+                                                </span>
+                                            )}
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={handleSaveQuestionOnly}
+                                            disabled={isSavingQuestionOnly || !manageQuestionText.trim()}
+                                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 hover:bg-primary text-white shadow-sm transition-all disabled:opacity-50 cursor-pointer hover:scale-105 active:scale-95"
+                                        >
+                                            {isSavingQuestionOnly ? 'Saving Question...' : 'Save Question Edits'}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 

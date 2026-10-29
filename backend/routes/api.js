@@ -254,14 +254,37 @@ router.get('/admin/questions', authCheck, async (req, res) => {
 // Answer or update a question (Admin)
 router.put('/admin/questions/:id', authCheck, async (req, res) => {
     try {
-        const { answerText, hasVideo, videoUrl, isDownloaded } = req.body;
+        const { questionText, name, phone, madhhab, status, answerText, hasVideo, videoUrl, isDownloaded } = req.body;
         
         const updates = [];
         const params = [];
 
+        if (questionText !== undefined) {
+            updates.push("questionText = ?");
+            params.push(questionText);
+        }
+        if (name !== undefined) {
+            updates.push("name = ?");
+            params.push(name);
+        }
+        if (phone !== undefined) {
+            updates.push("phone = ?");
+            params.push(phone);
+        }
+        if (madhhab !== undefined) {
+            updates.push("madhhab = ?");
+            params.push(madhhab);
+        }
+        if (status !== undefined) {
+            updates.push("status = ?");
+            params.push(status);
+        }
         if (answerText !== undefined) {
-            updates.push("answerText = ?", "status = 'Answered'");
+            updates.push("answerText = ?");
             params.push(answerText);
+            if (!status && answerText.trim() !== '') {
+                updates.push("status = 'Answered'");
+            }
         }
         if (hasVideo !== undefined) {
             updates.push("hasVideo = ?");
@@ -298,7 +321,7 @@ router.put('/admin/questions/:id', authCheck, async (req, res) => {
         clearPublicCache();
         res.json(formatQuestion(questions[0], comments));
     } catch (error) {
-        console.error('Error answering question:', error);
+        console.error('Error updating question:', error);
         res.status(500).json({ message: error.message });
     }
 });
