@@ -33,12 +33,22 @@ async function initDb() {
                 phone VARCHAR(100) NOT NULL,
                 madhhab VARCHAR(100) NOT NULL,
                 isUrgent BOOLEAN DEFAULT FALSE,
+                hasVideo BOOLEAN DEFAULT FALSE,
+                videoUrl VARCHAR(500) DEFAULT NULL,
+                isDownloaded BOOLEAN DEFAULT FALSE,
+                downloadedAt DATETIME DEFAULT NULL,
                 questionText TEXT NOT NULL,
                 answerText TEXT,
                 status VARCHAR(50) DEFAULT 'Pending',
                 createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
         `);
+
+        // Ensure columns exist if table was previously created
+        try { await connection.query(`ALTER TABLE fatwa_questions ADD COLUMN hasVideo BOOLEAN DEFAULT FALSE;`); } catch (e) {}
+        try { await connection.query(`ALTER TABLE fatwa_questions ADD COLUMN videoUrl VARCHAR(500) DEFAULT NULL;`); } catch (e) {}
+        try { await connection.query(`ALTER TABLE fatwa_questions ADD COLUMN isDownloaded BOOLEAN DEFAULT FALSE;`); } catch (e) {}
+        try { await connection.query(`ALTER TABLE fatwa_questions ADD COLUMN downloadedAt DATETIME DEFAULT NULL;`); } catch (e) {}
 
         // Create fatwa_comments table
         await connection.query(`

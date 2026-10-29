@@ -1,4 +1,4 @@
-import { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell, WidthType, AlignmentType, BorderStyle } from 'docx';
+import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from 'docx';
 import { saveAs } from 'file-saver';
 
 /**
@@ -7,94 +7,105 @@ import { saveAs } from 'file-saver';
 export async function exportSingleQuestionToDoc(question) {
     if (!question) return;
 
+    const docChildren = [
+        new Paragraph({
+            text: "Fiqh File - Official Mas'ala Record",
+            heading: HeadingLevel.TITLE,
+            alignment: AlignmentType.CENTER,
+            spacing: { after: 300 }
+        }),
+        new Paragraph({
+            children: [
+                new TextRun({ text: "Date: ", bold: true }),
+                new TextRun(new Date(question.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })),
+                new TextRun({ text: "    |    Madhhab: ", bold: true }),
+                new TextRun(question.madhhab || 'General'),
+                new TextRun({ text: "    |    Status: ", bold: true }),
+                new TextRun(question.status || 'Pending'),
+            ],
+            spacing: { after: 200 }
+        }),
+        ...(question.name ? [
+            new Paragraph({
+                children: [
+                    new TextRun({ text: "Submitted By: ", bold: true }),
+                    new TextRun(`${question.name} ${question.phone ? `(${question.phone})` : ''}`)
+                ],
+                spacing: { after: 300 }
+            })
+        ] : []),
+        ...(question.hasVideo && question.videoUrl ? [
+            new Paragraph({
+                children: [
+                    new TextRun({ text: "Published Video Explanation: ", bold: true, color: "DC2626" }),
+                    new TextRun({ text: question.videoUrl, color: "2563EB" })
+                ],
+                spacing: { after: 200 }
+            })
+        ] : []),
+        new Paragraph({
+            text: "Question / ചോദ്യം:",
+            heading: HeadingLevel.HEADING_2,
+            spacing: { before: 200, after: 150 }
+        }),
+        new Paragraph({
+            children: [
+                new TextRun({
+                    text: question.questionText || '',
+                    italics: true,
+                    size: 24
+                })
+            ],
+            spacing: { after: 300 }
+        }),
+        new Paragraph({
+            text: "Official Answer / മറുപടി:",
+            heading: HeadingLevel.HEADING_2,
+            spacing: { before: 200, after: 150 }
+        }),
+        new Paragraph({
+            children: [
+                new TextRun({
+                    text: question.answerText || 'Awaiting scholar response / മറുപടി നൽകിയിട്ടില്ല.',
+                    size: 24
+                })
+            ],
+            spacing: { after: 400 }
+        }),
+        ...(question.comments && question.comments.length > 0 ? [
+            new Paragraph({
+                text: `Discussion & Comments (${question.comments.length}):`,
+                heading: HeadingLevel.HEADING_3,
+                spacing: { before: 200, after: 150 }
+            }),
+            ...question.comments.map((c, i) => 
+                new Paragraph({
+                    children: [
+                        new TextRun({ text: `${i + 1}. ${c.name} (${new Date(c.createdAt).toLocaleDateString()}): `, bold: true }),
+                        new TextRun({ text: c.text })
+                    ],
+                    spacing: { after: 100 }
+                })
+            )
+        ] : []),
+        new Paragraph({
+            children: [
+                new TextRun({
+                    text: "Generated from Fiqh File Platform (fiqhfiles.samasthagraph.com)",
+                    size: 16,
+                    color: "888888",
+                    italics: true
+                })
+            ],
+            alignment: AlignmentType.CENTER,
+            spacing: { before: 400 }
+        })
+    ];
+
     const doc = new Document({
         sections: [{
             properties: {},
-            children: [
-                new Paragraph({
-                    text: "Fiqh File - Official Mas'ala Record",
-                    heading: HeadingLevel.TITLE,
-                    alignment: AlignmentType.CENTER,
-                    spacing: { after: 300 }
-                }),
-                new Paragraph({
-                    children: [
-                        new TextRun({ text: "Date: ", bold: true }),
-                        new TextRun(new Date(question.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })),
-                        new TextRun({ text: "    |    Madhhab: ", bold: true }),
-                        new TextRun(question.madhhab || 'General'),
-                        new TextRun({ text: "    |    Status: ", bold: true }),
-                        new TextRun(question.status || 'Pending'),
-                    ],
-                    spacing: { after: 200 }
-                }),
-                ...(question.name ? [
-                    new Paragraph({
-                        children: [
-                            new TextRun({ text: "Submitted By: ", bold: true }),
-                            new TextRun(`${question.name} ${question.phone ? `(${question.phone})` : ''}`)
-                        ],
-                        spacing: { after: 300 }
-                    })
-                ] : []),
-                new Paragraph({
-                    text: "Question / ചോദ്യം:",
-                    heading: HeadingLevel.HEADING_2,
-                    spacing: { before: 200, after: 150 }
-                }),
-                new Paragraph({
-                    children: [
-                        new TextRun({
-                            text: question.questionText || '',
-                            italics: true,
-                            size: 24
-                        })
-                    ],
-                    spacing: { after: 300 }
-                }),
-                new Paragraph({
-                    text: "Official Answer / മറുപടി:",
-                    heading: HeadingLevel.HEADING_2,
-                    spacing: { before: 200, after: 150 }
-                }),
-                new Paragraph({
-                    children: [
-                        new TextRun({
-                            text: question.answerText || 'Awaiting scholar response / മറുപടി നൽകിയിട്ടില്ല.',
-                            size: 24
-                        })
-                    ],
-                    spacing: { after: 400 }
-                }),
-                ...(question.comments && question.comments.length > 0 ? [
-                    new Paragraph({
-                        text: `Discussion & Comments (${question.comments.length}):`,
-                        heading: HeadingLevel.HEADING_3,
-                        spacing: { before: 200, after: 150 }
-                    }),
-                    ...question.comments.map((c, i) => 
-                        new Paragraph({
-                            children: [
-                                new TextRun({ text: `${i + 1}. ${c.name} (${new Date(c.createdAt).toLocaleDateString()}): `, bold: true }),
-                                new TextRun({ text: c.text })
-                            ],
-                            spacing: { after: 100 }
-                        })
-                    )
-                ] : []),
-                new Paragraph({
-                    children: [
-                        new TextRun({
-                            text: "Generated from Fiqh File Platform (fiqhfiles.samasthagraph.com)",
-                            size: 16,
-                            color: "888888",
-                            italics: true
-                        })
-                    ],
-                    alignment: AlignmentType.CENTER,
-                    spacing: { before: 400 }
-                })
-            ]
+            children: docChildren
         }]
     });
 
@@ -108,8 +119,6 @@ export async function exportSingleQuestionToDoc(question) {
  */
 export async function exportQuestionsListToDoc(questions, title = "Fiqh File - Questions Export") {
     if (!questions || questions.length === 0) return;
-
-    const sections = [];
 
     // Header
     const docChildren = [
@@ -148,10 +157,21 @@ export async function exportQuestionsListToDoc(questions, title = "Fiqh File - Q
                 children: [
                     new TextRun({ text: "Date: ", bold: true }),
                     new TextRun(new Date(q.createdAt).toLocaleDateString()),
-                    ...(q.isUrgent ? [new TextRun({ text: "  |  [URGENT PRIORITY]", bold: true, color: "DC2626" })] : [])
+                    ...(q.isUrgent ? [new TextRun({ text: "  |  [URGENT PRIORITY]", bold: true, color: "DC2626" })] : []),
+                    ...(q.hasVideo ? [new TextRun({ text: "  |  [VIDEO PUBLISHED]", bold: true, color: "E11D48" })] : []),
+                    ...(q.isDownloaded ? [new TextRun({ text: "  |  [DOC EXPORTED]", bold: true, color: "059669" })] : [])
                 ],
                 spacing: { after: 100 }
             }),
+            ...(q.hasVideo && q.videoUrl ? [
+                new Paragraph({
+                    children: [
+                        new TextRun({ text: "Video Link: ", bold: true }),
+                        new TextRun({ text: q.videoUrl, color: "2563EB" })
+                    ],
+                    spacing: { after: 100 }
+                })
+            ] : []),
             new Paragraph({
                 children: [
                     new TextRun({ text: "Question: ", bold: true }),

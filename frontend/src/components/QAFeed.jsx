@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+﻿import { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { FiSearch, FiFilter, FiX } from 'react-icons/fi';
@@ -176,9 +176,16 @@ const QAFeed = ({ limit }) => {
                             <div key={q._id} className="flex flex-col overflow-hidden rounded-2xl border border-primary/10 bg-white transition-all hover:shadow-xl hover:-translate-y-1">
                                 <div className="p-6 flex flex-col h-full">
                                     <div className="flex items-center justify-between gap-x-2 mb-4">
-                                        <span className="inline-flex items-center rounded-lg bg-secondary/15 px-2.5 py-1 text-xs font-black text-primary uppercase tracking-tight">
-                                            {q.madhhab}
-                                        </span>
+                                        <div className="flex items-center gap-1.5 flex-wrap">
+                                            <span className="inline-flex items-center rounded-lg bg-secondary/15 px-2.5 py-1 text-xs font-black text-primary uppercase tracking-tight">
+                                                {q.madhhab}
+                                            </span>
+                                            {q.hasVideo && (
+                                                <span className="inline-flex items-center gap-1 rounded-lg bg-rose-50 border border-rose-200 px-2 py-0.5 text-[10px] font-bold text-rose-600">
+                                                    <span>â–¶</span> Video
+                                                </span>
+                                            )}
+                                        </div>
                                         <span className="text-[11px] font-medium text-slate-400">
                                             {new Date(q.createdAt).toLocaleDateString()}
                                         </span>
@@ -195,7 +202,7 @@ const QAFeed = ({ limit }) => {
                                             {q.answerText}
                                         </p>
                                         <Link to={`/masala/${q._id}`} className="inline-flex items-center gap-1 text-xs sm:text-sm font-bold text-primary hover:text-secondary transition-colors">
-                                            Read Full Mas'ala <span>→</span>
+                                            Read Full Mas'ala <span>&rarr;</span>
                                         </Link>
                                     </div>
                                 </div>
@@ -207,7 +214,7 @@ const QAFeed = ({ limit }) => {
                 {limit && filteredQuestions.length > 0 && (
                     <div className="mt-12 text-center">
                         <Link to="/masalas" className="inline-flex items-center justify-center rounded-xl border-2 border-primary/20 bg-white px-8 py-3.5 text-sm font-bold text-primary hover:bg-primary hover:text-white shadow-sm transition-all hover:scale-105 active:scale-95">
-                            Browse All in Archive →
+                            Browse All in Archive â†’
                         </Link>
                     </div>
                 )}
@@ -217,3 +224,4 @@ const QAFeed = ({ limit }) => {
 };
 
 export default QAFeed;
+

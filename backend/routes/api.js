@@ -32,6 +32,10 @@ function formatQuestion(q, comments = []) {
         phone: q.phone,
         madhhab: q.madhhab,
         isUrgent: Boolean(q.isUrgent),
+        hasVideo: Boolean(q.hasVideo),
+        videoUrl: q.videoUrl || '',
+        isDownloaded: Boolean(q.isDownloaded),
+        downloadedAt: q.downloadedAt || null,
         questionText: q.questionText,
         answerText: q.answerText || '',
         status: q.status,
@@ -247,14 +251,43 @@ router.get('/admin/questions', authCheck, async (req, res) => {
     }
 });
 
-// Answer a question (Admin)
+// Answer or update a question (Admin)
 router.put('/admin/questions/:id', authCheck, async (req, res) => {
     try {
-        const { answerText } = req.body;
-        await pool.query(
-            "UPDATE fatwa_questions SET answerText = ?, status = 'Answered' WHERE id = ?",
-            [answerText, req.params.id]
-        );
+        const { answerText, hasVideo, videoUrl, isDownloaded } = req.body;
+        
+        const updates = [];
+        const params = [];
+
+        if (answerText !== undefined) {
+            updates.push("answerText = ?", "status = 'Answered'");
+            params.push(answerText);
+        }
+        if (hasVideo !== undefined) {
+            updates.push("hasVideo = ?");
+            params.push(Boolean(hasVideo));
+        }
+        if (videoUrl !== undefined) {
+            updates.push("videoUrl = ?");
+            params.push(videoUrl);
+        }
+        if (isDownloaded !== undefined) {
+            updates.push("isDownloaded = ?");
+            params.push(Boolean(isDownloaded));
+            if (isDownloaded) {
+                updates.push("downloadedAt = NOW()");
+            } else {
+                updates.push("downloadedAt = NULL");
+            }
+        }
+
+        if (updates.length > 0) {
+            params.push(req.params.id);
+            await pool.query(
+                `UPDATE fatwa_questions SET ${updates.join(', ')} WHERE id = ?`,
+                params
+            );
+        }
 
         const [questions] = await pool.query('SELECT * FROM fatwa_questions WHERE id = ?', [req.params.id]);
         if (questions.length === 0) {
@@ -267,6 +300,94 @@ router.put('/admin/questions/:id', authCheck, async (req, res) => {
     } catch (error) {
         console.error('Error answering question:', error);
         res.status(500).json({ message: error.message });
+    }
+});
+
+// Toggle video published status (Admin)
+router.put('/admin/questions/:id/video', authCheck, async (req, res) => {
+    try {
+        const { videoUrl, hasVideo } = req.body;
+        if (hasVideo !== undefined) {
+            await pool.query(
+                'UPDATE fatwa_questions SET hasVideo = ?, videoUrl = COALESCE(?, videoUrl) WHERE id = ?',
+                [Boolean(hasVideo), videoUrl || null, req.params.id]
+            );
+        } else {
+            await pool.query(
+                'UPDATE fatwa_questions SET hasVideo = NOT hasVideo WHERE id = ?',
+                [req.params.id]
+            );
+        }
+
+        const [questions] = await pool.query('SELECT * FROM fatwa_questions WHERE id = ?', [req.params.id]);
+        if (questions.length === 0) {
+            return res.status(404).json({ message: 'Question not found' });
+        }
+
+        const [comments] = await pool.query('SELECT * FROM fatwa_comments WHERE questionId = ?', [req.params.id]);
+        clearPublicCache();
+        res.json(formatQuestion(questions[0], comments));
+    } catch (error) {
+        console.error('Error toggling video status:', error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// Toggle downloaded status (Admin)
+router.put('/admin/questions/:id/downloaded', authCheck, async (req, res) => {
+    try {
+        const { isDownloaded } = req.body;
+        if (isDownloaded !== undefined) {
+            if (isDownloaded) {
+                await pool.query(
+                    'UPDATE fatwa_questions SET isDownloaded = TRUE, downloadedAt = NOW() WHERE id = ?',
+                    [req.params.id]
+                );
+            } else {
+                await pool.query(
+                    'UPDATE fatwa_questions SET isDownloaded = FALSE, downloadedAt = NULL WHERE id = ?',
+                    [req.params.id]
+                );
+            }
+        } else {
+            await pool.query(
+                'UPDATE fatwa_questions SET isDownloaded = NOT isDownloaded, downloadedAt = IF(isDownloaded = FALSE, NOW(), NULL) WHERE id = ?',
+                [req.params.id]
+            );
+        }
+
+        const [questions] = await pool.query('SELECT * FROM fatwa_questions WHERE id = ?', [req.params.id]);
+        if (questions.length === 0) {
+            return res.status(404).json({ message: 'Question not found' });
+        }
+
+        const [comments] = await pool.query('SELECT * FROM fatwa_comments WHERE questionId = ?', [req.params.id]);
+        clearPublicCache();
+        res.json(formatQuestion(questions[0], comments));
+    } catch (error) {
+        console.error('Error toggling downloaded status:', error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// Bulk mark questions as downloaded (Admin)
+router.post('/admin/questions/mark-downloaded', authCheck, async (req, res) => {
+    try {
+        const { ids } = req.body;
+        if (!Array.isArray(ids) || ids.length === 0) {
+            return res.status(400).json({ error: 'IDs array required' });
+        }
+
+        await pool.query(
+            'UPDATE fatwa_questions SET isDownloaded = TRUE, downloadedAt = NOW() WHERE id IN (?)',
+            [ids]
+        );
+
+        clearPublicCache();
+        res.json({ success: true, count: ids.length });
+    } catch (error) {
+        console.error('Error bulk marking downloaded:', error);
+        res.status(500).json({ error: 'Server error' });
     }
 });
 
@@ -295,12 +416,12 @@ router.put('/admin/questions/:id/urgent', authCheck, async (req, res) => {
 // Create question as Admin
 router.post('/admin/questions', authCheck, async (req, res) => {
     try {
-        const { name, phone, madhhab, questionText, answerText } = req.body;
+        const { name, phone, madhhab, questionText, answerText, hasVideo, videoUrl } = req.body;
         const status = answerText ? 'Answered' : 'Pending';
 
         const [result] = await pool.query(
-            'INSERT INTO fatwa_questions (name, phone, madhhab, questionText, answerText, status) VALUES (?, ?, ?, ?, ?, ?)',
-            [name, phone, madhhab || 'General / No Preference', questionText, answerText || '', status]
+            'INSERT INTO fatwa_questions (name, phone, madhhab, questionText, answerText, status, hasVideo, videoUrl) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            [name, phone, madhhab || 'General / No Preference', questionText, answerText || '', status, Boolean(hasVideo), videoUrl || null]
         );
 
         const [questions] = await pool.query('SELECT * FROM fatwa_questions WHERE id = ?', [result.insertId]);

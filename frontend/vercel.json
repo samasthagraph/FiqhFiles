@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/:match*",
+      "destination": "https://fiqh-files-tn61.vercel.app/api/:match*"
+    },
+    {
       "source": "/((?!api/).*)",
       "destination": "/index.html"
     }

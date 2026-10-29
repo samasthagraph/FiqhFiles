@@ -22,12 +22,16 @@ const AdminLogin = () => {
             }
         } catch (err) {
             console.error('Admin login error:', err);
-            if (err.response?.data?.message) {
+            if (err.response?.status === 401) {
+                setError('Invalid username or password');
+            } else if (err.response?.status === 404) {
+                setError(`API endpoint not found (404) at ${API_BASE_URL}/admin/login. Please verify backend URL.`);
+            } else if (err.response?.data?.message) {
                 setError(err.response.data.message);
             } else if (err.code === 'ERR_NETWORK' || !err.response) {
-                setError(`Connection failed: Unable to reach API server at ${API_BASE_URL}. Please check your VITE_API_URL.`);
+                setError(`Connection failed: Unable to reach API server at ${API_BASE_URL}.`);
             } else {
-                setError('Invalid username or password');
+                setError(err.message || 'Login failed. Please try again.');
             }
         } finally {
             setIsLoading(false);

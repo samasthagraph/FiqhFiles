@@ -133,6 +133,32 @@ const FatwaDetail = () => {
                                     {fatwa.answerText}
                                 </div>
                             </div>
+
+                            {/* Video Explanation Card if available */}
+                            {fatwa.hasVideo && (
+                                <div className="mt-8 p-5 sm:p-6 bg-rose-50/70 border border-rose-200 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="size-10 rounded-xl bg-rose-600 text-white flex items-center justify-center font-bold text-lg shadow-md shrink-0">
+                                            ▶
+                                        </div>
+                                        <div>
+                                            <h4 className="font-bold text-slate-900 text-sm sm:text-base">Published Video Explanation</h4>
+                                            <p className="text-xs text-slate-500">A detailed video ruling or discussion is available for this mas'ala.</p>
+                                        </div>
+                                    </div>
+                                    {fatwa.videoUrl && (
+                                        <a
+                                            href={fatwa.videoUrl}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="inline-flex items-center justify-center gap-2 bg-rose-600 hover:bg-rose-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-md transition-all shrink-0 cursor-pointer"
+                                        >
+                                            <span>Watch Video</span>
+                                            <span className="material-symbols-outlined text-sm">open_in_new</span>
+                                        </a>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     </div>
 
