@@ -8,7 +8,7 @@ import VideoPlayer from './VideoPlayer';
 
 const MADHHABS = ["All", "Shafi'i", "Hanafi", "Maliki", "Hanbali", "General / No Preference"];
 
-const QAFeed = ({ limit }) => {
+const QAFeed = ({ limit, showFilter = !limit }) => {
     const cacheKey = `qa_feed_${limit || 'all'}`;
     const cached = clientCache.get(cacheKey);
 
@@ -74,7 +74,7 @@ const QAFeed = ({ limit }) => {
         <section className="py-12 sm:py-16 bg-brand-light" id="feed">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 {/* Header & Filter Controls */}
-                <div className="flex flex-col gap-6 mb-10">
+                <div className={`flex flex-col gap-6 ${showFilter ? 'mb-10' : 'mb-8'}`}>
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div>
                             <h2 className="text-3xl font-black tracking-tight text-slate-900">
@@ -105,52 +105,54 @@ const QAFeed = ({ limit }) => {
                         )}
                     </div>
 
-                    {/* Filter Pills and Videos Toggle */}
-                    <div className="flex flex-wrap items-center gap-2 pb-1">
-                        <div className="flex items-center gap-1.5 text-xs font-bold uppercase text-slate-500 mr-1 shrink-0">
-                            <FiFilter /> Filter:
-                        </div>
+                    {/* Filter Pills and Videos Toggle (only shown when showFilter is true) */}
+                    {showFilter && (
+                        <div className="flex flex-wrap items-center gap-2 pb-1">
+                            <div className="flex items-center gap-1.5 text-xs font-bold uppercase text-slate-500 mr-1 shrink-0">
+                                <FiFilter /> Filter:
+                            </div>
 
-                        {/* Madhhab Pills (Scrollable) */}
-                        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-                            {MADHHABS.map((madhhab) => {
-                                const isSelected = selectedMadhhab === madhhab && !videosOnly;
-                                const count = countsByMadhhab[madhhab] || 0;
-                                return (
-                                    <button
-                                        key={madhhab}
-                                        onClick={() => { setSelectedMadhhab(madhhab); setVideosOnly(false); }}
-                                        className={`shrink-0 flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-                                            isSelected
-                                                ? 'bg-brand-dark text-white shadow-md border border-brand-gold/30 scale-[1.02]'
-                                                : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
-                                        }`}
-                                    >
-                                        <span>{madhhab}</span>
-                                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${isSelected ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-600'}`}>
-                                            {count}
-                                        </span>
-                                    </button>
-                                );
-                            })}
+                            {/* Madhhab Pills (Scrollable) */}
+                            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+                                {MADHHABS.map((madhhab) => {
+                                    const isSelected = selectedMadhhab === madhhab && !videosOnly;
+                                    const count = countsByMadhhab[madhhab] || 0;
+                                    return (
+                                        <button
+                                            key={madhhab}
+                                            onClick={() => { setSelectedMadhhab(madhhab); setVideosOnly(false); }}
+                                            className={`shrink-0 flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+                                                isSelected
+                                                    ? 'bg-brand-dark text-white shadow-md border border-brand-gold/30 scale-[1.02]'
+                                                    : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
+                                            }`}
+                                        >
+                                            <span>{madhhab}</span>
+                                            <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${isSelected ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-600'}`}>
+                                                {count}
+                                            </span>
+                                        </button>
+                                    );
+                                })}
 
-                            {/* Videos Only Filter Pill */}
-                            <button
-                                onClick={() => setVideosOnly(!videosOnly)}
-                                className={`shrink-0 flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-                                    videosOnly
-                                        ? 'bg-brand-dark text-brand-gold shadow-md border-2 border-brand-gold scale-[1.02]'
-                                        : 'bg-white text-brand-dark hover:bg-brand-gold/10 border border-brand-gold/50'
-                                }`}
-                                title="Show rulings that have published video explanations"
-                            >
-                                <span>▶ With Video</span>
-                                <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${videosOnly ? 'bg-brand-gold text-brand-dark font-black' : 'bg-brand-gold/20 text-brand-dark font-bold'}`}>
-                                    {totalVideosCount}
-                                </span>
-                            </button>
+                                {/* Videos Only Filter Pill */}
+                                <button
+                                    onClick={() => setVideosOnly(!videosOnly)}
+                                    className={`shrink-0 flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+                                        videosOnly
+                                            ? 'bg-brand-dark text-brand-gold shadow-md border-2 border-brand-gold scale-[1.02]'
+                                            : 'bg-white text-brand-dark hover:bg-brand-gold/10 border border-brand-gold/50'
+                                    }`}
+                                    title="Show rulings that have published video explanations"
+                                >
+                                    <span>▶ With Video</span>
+                                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${videosOnly ? 'bg-brand-gold text-brand-dark font-black' : 'bg-brand-gold/20 text-brand-dark font-bold'}`}>
+                                        {totalVideosCount}
+                                    </span>
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
 
                 {/* Content Grid */}

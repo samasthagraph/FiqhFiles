@@ -11,17 +11,13 @@ const Header = () => {
         <header className="sticky top-0 z-50 bg-brand-dark text-brand-light border-b border-brand-olive/30 shadow-md">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div className="flex h-20 items-center justify-between whitespace-nowrap">
-                    {/* Brand Logo matching samasthagraph.com */}
+                    {/* Fiqh File Brand Logo */}
                     <Link to="/" className="flex items-center gap-3 group">
                         <img
-                            src="/Logo_white.png"
-                            alt="Samastha Graph"
-                            className="h-12 sm:h-14 w-auto object-contain transition-transform group-hover:scale-105"
+                            src="/fiqh_files_logo.png"
+                            alt="Fiqh File"
+                            className="h-10 sm:h-12 w-auto object-contain transition-transform group-hover:scale-105"
                         />
-                        <div className="border-l border-brand-olive/50 pl-3 hidden sm:block">
-                            <span className="block text-xs font-black uppercase tracking-widest text-brand-gold">Fiqh Files</span>
-                            <span className="block text-[10px] text-brand-surface font-medium">Samastha Knowledge Base</span>
-                        </div>
                     </Link>
 
                     {/* Desktop Navigation */}

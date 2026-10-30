@@ -46,7 +46,7 @@ const LandingPage = () => {
                     </div>
                 </section>
 
-                <QAFeed limit={12} />
+                <QAFeed limit={12} showFilter={false} />
             </main>
 
             {/* Footer matching samasthagraph.com */}
@@ -54,11 +54,7 @@ const LandingPage = () => {
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex flex-col items-center justify-between gap-8 md:flex-row">
                         <div className="flex items-center gap-3">
-                            <img src="/Logo_white.png" alt="Samastha Graph" className="h-10 w-auto object-contain" />
-                            <div className="border-l border-brand-olive/50 pl-3">
-                                <span className="block text-xs font-black uppercase tracking-widest text-brand-gold">Fiqh Files</span>
-                                <span className="block text-[10px] text-brand-surface font-medium">Samastha Knowledge Base</span>
-                            </div>
+                            <img src="/fiqh_files_logo.png" alt="Fiqh File" className="h-9 sm:h-10 w-auto object-contain" />
                         </div>
                         <p className="text-sm text-brand-surface text-center">
                             © {new Date().getFullYear()} Fiqh Files | Samastha Graph. All rights reserved.
