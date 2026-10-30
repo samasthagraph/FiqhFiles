@@ -5,7 +5,6 @@ import Header from '../components/Header';
 import { useForm } from 'react-hook-form';
 import { API_BASE_URL } from '../config';
 import { clientCache } from '../utils/clientCache';
-import { exportSingleQuestionToDoc } from '../utils/docxExport';
 import VideoPlayer from '../components/VideoPlayer';
 
 const FatwaDetail = () => {
@@ -100,18 +99,10 @@ const FatwaDetail = () => {
                                     </span>
                                 )}
                             </div>
-                            <div className="flex items-center gap-3 flex-wrap">
+                            <div>
                                 <span className="text-slate-500 text-xs font-medium">
                                     Published {new Date(fatwa.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
                                 </span>
-                                <button
-                                    onClick={() => exportSingleQuestionToDoc(fatwa)}
-                                    className="inline-flex items-center gap-1.5 bg-brand-gold hover:bg-yellow-500 text-brand-dark px-3 py-1.5 text-xs font-black transition-all shadow-sm cursor-pointer uppercase tracking-wider"
-                                    title="Download this Mas'ala as a Word Doc file"
-                                >
-                                    <span className="material-symbols-outlined text-sm">description</span>
-                                    Download Doc
-                                </button>
                             </div>
                         </div>
 
